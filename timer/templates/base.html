@@ -9,10 +9,36 @@
   <body>
     <header>
       <h1>Diving Timer</h1>
+      <nav class="nav">
+        <a class="nav-btn {% if request and request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Главная</a>
+        <a class="nav-btn {% if request and request.path == '/exercise-prep/' %}active{% endif %}" href="{% url 'exercise_prep' %}">Подготовка</a>
+        <a class="nav-btn {% if request and request.path == '/exercise/' %}active{% endif %}" href="{% url 'exercise' %}">Упражнение</a>
+        <a class="nav-btn {% if request and request.path == '/exercise-statistics/' %}active{% endif %}" href="{% url 'exercise_statistics' %}">Статистика</a>
+      </nav>
+      <script>
+        (function(){
+          var anyActive = document.querySelector('.nav-btn.active');
+          if (!anyActive) {
+            var path = window.location.pathname;
+            document.querySelectorAll('.nav-btn').forEach(function(el){
+              if (el.getAttribute('href') === path) el.classList.add('active');
+            });
+          }
+        })();
+      </script>
     </header>
     <main>
       {% block content %}{% endblock %}
     </main>
+    <footer class="footer">
+      <div class="container">
+        <span>© 2025 Diving Timer</span>
+        <nav class="footer-nav">
+          <a href="/privacy/">Политика</a>
+          <a href="https://github.com/yourname/diving_timer_web" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </footer>
   </body>
   </html>
 

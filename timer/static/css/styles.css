@@ -1,5 +1,60 @@
-body { font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+/* Base reset and responsive-friendly defaults */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: system-ui, sans-serif; margin: 0; padding: 0; line-height: 1.5; display: flex; min-height: 100vh; flex-direction: column; }
+img, video { max-width: 100%; height: auto; }
 header { background: #0a2540; color: #fff; padding: 12px 16px; }
-.container { padding: 16px; }
+.container { max-width: 64rem; margin: 0 auto; padding-inline: 16px; }
+@media (min-width: 48rem) { .container { padding-inline: 24px; } }
+
+/* Sticky footer layout */
+main { flex: 1 1 auto; }
+
+/* Fluid typography */
+h1 { font-size: clamp(1.25rem, 2vw + 1rem, 2rem); margin: 0; }
+h2 { font-size: clamp(1.125rem, 1.2vw + 0.9rem, 1.5rem); }
+p  { font-size: 1rem; }
 
 
+/* Navigation buttons */
+nav.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-btn {
+  appearance: none;
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #1e90ff; /* blue */
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #1a7fdc;
+  line-height: 1.2;
+  min-height: 36px;
+}
+.nav-btn:hover { background: #167ad6; }
+.nav-btn.active {
+  background: #fff; /* active: white */
+  color: #0a2540;
+  border-color: #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+header nav { margin-top: 8px; }
+@media (min-width: 48rem) {
+  nav.nav { flex-wrap: nowrap; }
+}
+
+/* Footer */
+.footer { background: #0a2540; color: #cbd5e1; padding: 12px 16px; }
+.footer .container { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (min-width: 48rem) { .footer .container { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-nav { display: flex; gap: 12px; }
+.footer-nav a { color: #93c5fd; text-decoration: none; }
+.footer-nav a:hover { text-decoration: underline; }
+
+/* Utilities */
+.stack > * + * { margin-top: 12px; }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
