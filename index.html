@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тетрис (DOM + CSS Grid)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <h1 class="app__title">Тетрис</h1>
+    </header>
+
+    <main class="app__main">
+      <section class="panel panel--left">
+        <div id="board" aria-label="Игровое поле" role="grid"></div>
+      </section>
+
+      <aside class="panel panel--right">
+        <div class="stats">
+          <div class="stat"><span>Счет:</span> <strong id="score">0</strong></div>
+          <div class="stat"><span>Линии:</span> <strong id="lines">0</strong></div>
+          <div class="stat"><span>Уровень:</span> <strong id="level">1</strong></div>
+        </div>
+
+        <div class="next">
+          <div class="next__title">Следующая</div>
+          <div id="next" class="next__grid" aria-label="Следующая фигура"></div>
+        </div>
+
+        <div class="controls">
+          <button id="newGameBtn" class="btn" type="button">Новая игра (Enter)</button>
+          <button id="pauseBtn" class="btn" type="button">Пауза (P)</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="app__footer">
+      <div class="legend">
+        <span>Управление: ←/→ — движение, ↓ — ускорить, ↑/Space — повернуть, P — пауза</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="mobile-controls" aria-label="Кнопки управления">
+    <button id="leftBtn" class="btn btn--ghost" type="button">←</button>
+    <button id="rotateBtn" class="btn btn--ghost" type="button">⟳</button>
+    <button id="rightBtn" class="btn btn--ghost" type="button">→</button>
+    <button id="downBtn" class="btn btn--ghost" type="button">↓</button>
+    <button id="pauseSmallBtn" class="btn btn--ghost" type="button">P</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
