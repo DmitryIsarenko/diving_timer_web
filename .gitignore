@@ -1,0 +1,79 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media & static files
+/media
+/staticfiles
+/static
+*.media
+*.static
+
+# Django migrations
+*/migrations/
+!*/migrations/__init__.py
+
+# Environment files
+.env
+.env.*
+*.env
+*.venv
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# OS files
+Thumbs.db
+
+# Python wheels
+*.whl
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# pytest
+.pytest_cache/
+
+# Sphinx documentation
+docs/_build/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Backup files
+*.bak
+*.tmp
+
+# Folder-specific ignore
+# folders
