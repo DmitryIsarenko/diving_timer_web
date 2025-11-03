@@ -6,8 +6,8 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, 'timer/index.html')
 
 
-def exercise_prep(request: HttpRequest) -> HttpResponse:
-    return render(request, 'timer/exercise_prep.html')
+# def exercise_prep(request: HttpRequest) -> HttpResponse:
+#     return render(request, 'timer/exercise_prep.html')
 
 
 def exercise(request: HttpRequest) -> HttpResponse:
