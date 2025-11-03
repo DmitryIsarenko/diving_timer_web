@@ -2,8 +2,64 @@
 {% block content %}
   <section class="container">
     <h2>Упражнение</h2>
-    <p>Основная страница упражнения.</p>
+    <div class="stack">
+      <form id="exercise-form" class="exercise-form">
+        <div class="grid-2">
+          <div class="field">
+            <label for="inhaleSec">Вдох (сек)</label>
+            <input id="inhaleSec" name="inhaleSec" type="number" min="1" step="1" value="4" required>
+          </div>
+          <div class="field">
+            <label for="holdInSec">Задержка на вдохе (сек)</label>
+            <input id="holdInSec" name="holdInSec" type="number" min="1" step="1" value="4" required>
+          </div>
+          <div class="field">
+            <label for="exhaleSec">Выдох (сек)</label>
+            <input id="exhaleSec" name="exhaleSec" type="number" min="1" step="1" value="4" required>
+          </div>
+          <div class="field">
+            <label for="holdOutSec">Задержка на выдохе (сек, опционально)</label>
+            <input id="holdOutSec" name="holdOutSec" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label for="rounds">Круги</label>
+            <input id="rounds" name="rounds" type="number" min="1" step="1" value="10" required>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button type="button" id="startBtn" class="nav-btn" disabled>Старт</button>
+          <button type="button" id="pauseBtn" class="nav-btn" disabled>Пауза</button>
+          <button type="button" id="resetBtn" class="nav-btn" disabled>Сброс</button>
+          <a id="toStats" class="nav-btn disabled-link" href="{% url 'exercise_statistics' %}" aria-disabled="true" tabindex="-1">Перейти к статистике</a>
+        </div>
+
+        <div class="grid-3 indicators">
+          <div class="card">
+            <div class="card-title">Текущий этап</div>
+            <div id="currentPhase" class="card-value">—</div>
+          </div>
+          <div class="card">
+            <div class="card-title">До конца этапа</div>
+            <div id="phaseRemaining" class="card-value">00:00</div>
+          </div>
+          <div class="card">
+            <div class="card-title">До конца всего</div>
+            <div id="totalRemaining" class="card-value">00:00:00</div>
+          </div>
+        </div>
+
+        <div class="rounds-info">
+          Круг: <span id="roundInfo">0 / 0</span>
+        </div>
+
+        <div class="total-time-info">
+          Общее время тренировки: <span id="totalPlanned">00:00:00</span>
+        </div>
+      </form>
+    </div>
   </section>
+  <script src="/static/js/exercise.js"></script>
 {% endblock %}
 
 

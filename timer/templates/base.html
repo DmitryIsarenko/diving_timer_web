@@ -11,7 +11,7 @@
       <h1>Diving Timer</h1>
       <nav class="nav">
         <a class="nav-btn {% if request and request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Главная</a>
-        <a class="nav-btn {% if request and request.path == '/exercise-prep/' %}active{% endif %}" href="{% url 'exercise_prep' %}">Подготовка</a>
+        {% comment %} <a class="nav-btn {% if request and request.path == '/exercise-prep/' %}active{% endif %}" href="{% url 'exercise_prep' %}">Подготовка</a> {% endcomment %}
         <a class="nav-btn {% if request and request.path == '/exercise/' %}active{% endif %}" href="{% url 'exercise' %}">Упражнение</a>
         <a class="nav-btn {% if request and request.path == '/exercise-statistics/' %}active{% endif %}" href="{% url 'exercise_statistics' %}">Статистика</a>
       </nav>
@@ -34,7 +34,7 @@
       <div class="container">
         <span>© 2025 Diving Timer</span>
         <nav class="footer-nav">
-          <a href="/privacy/">Политика</a>
+          {% comment %} <a href="/privacy/">Политика</a> {% endcomment %}
           <a href="https://github.com/yourname/diving_timer_web" target="_blank" rel="noopener">GitHub</a>
         </nav>
       </div>
