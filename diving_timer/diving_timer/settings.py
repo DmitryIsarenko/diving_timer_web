@@ -77,6 +77,12 @@ DATABASES = {
     }
 }
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    'django_diving_timer',
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
