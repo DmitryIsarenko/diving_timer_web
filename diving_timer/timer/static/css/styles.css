@@ -1,0 +1,160 @@
+/* Base reset and responsive-friendly defaults */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: system-ui, sans-serif; margin: 0; padding: 0; line-height: 1.5; display: flex; min-height: 100vh; flex-direction: column; }
+img, video { max-width: 100%; height: auto; }
+header { background: #0a2540; color: #fff; padding: 12px 16px; }
+.container { max-width: 64rem; margin: 0 auto; padding-inline: 16px; }
+@media (min-width: 48rem) { .container { padding-inline: 24px; } }
+
+/* Sticky footer layout */
+main { flex: 1 1 auto; }
+
+/* Fluid typography */
+h1 { font-size: clamp(1.25rem, 2vw + 1rem, 2rem); margin: 0; }
+h2 { font-size: clamp(1.125rem, 1.2vw + 0.9rem, 1.5rem); }
+p  { font-size: 1rem; }
+
+
+/* Navigation buttons */
+nav.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-btn {
+  appearance: none;
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #1e90ff; /* blue */
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #1a7fdc;
+  line-height: 1.2;
+  min-height: 36px;
+}
+.nav-btn:hover { background: #167ad6; }
+.nav-btn:disabled {
+  opacity: 0.5;           /* match .disabled-link */
+  pointer-events: none;   /* ignore mouse interactions */
+}
+.nav-btn.active {
+  background: #fff; /* active: white */
+  color: #0a2540;
+  border-color: #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+header nav { margin-top: 8px; }
+@media (min-width: 48rem) {
+  nav.nav { flex-wrap: nowrap; }
+}
+
+/* Footer */
+.footer { background: #0a2540; color: #cbd5e1; padding: 12px 16px; }
+.footer .container { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (min-width: 48rem) { .footer .container { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-nav { display: flex; gap: 12px; }
+.footer-nav a { color: #93c5fd; text-decoration: none; }
+.footer-nav a:hover { text-decoration: underline; }
+
+/* Utilities */
+.stack > * + * { margin-top: 12px; }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* Exercise page */
+.exercise-form { display: block; }
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 42rem) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+.grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 48rem) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+.field label { display: block; font-weight: 600; margin-bottom: 4px; }
+.field input[type="number"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.card-title { color: #475569; font-size: 0.9rem; }
+.card-value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+.indicators { margin-top: 8px; }
+.rounds-info, .total-time-info { margin-top: 8px; color: #334155; }
+.disabled-link { pointer-events: none; opacity: 0.5; }
+
+
+/* Home page styles */
+.home-stack {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.home-title {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+  margin-bottom: 1rem;
+  color: #0a2540;
+}
+
+.home-subtitle {
+  font-size: 1.2rem;
+  color: #475569;
+  margin-bottom: 2rem;
+}
+
+.home-features {
+  margin: 2rem 0;
+}
+
+.home-card h3.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #0a2540;
+}
+
+.home-card p {
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.home-controls {
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.home-controls .nav-btn {
+  min-width: 200px;
+  text-align: center;
+}
+
+.nav-btn--secondary {
+  background: #6c757d;
+  border-color: #5a6268;
+}
+
+.nav-btn--secondary:hover {
+  background: #545b62;
+}
+
+.home-methodology {
+  margin-top: 2rem;
+}
+
+@media (max-width: 48rem) {
+  .home-controls {
+      flex-direction: column;
+      align-items: center;
+  }
+  
+  .home-controls .nav-btn {
+      min-width: 250px;
+  }
+}

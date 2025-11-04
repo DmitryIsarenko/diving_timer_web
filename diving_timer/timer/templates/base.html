@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Diving Timer</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+  </head>
+  <body>
+    <header>
+      <h1>Diving Timer</h1>
+      <nav class="nav">
+        <a class="nav-btn {% if request and request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Главная</a>
+        {% comment %} <a class="nav-btn {% if request and request.path == '/exercise-prep/' %}active{% endif %}" href="{% url 'exercise_prep' %}">Подготовка</a> {% endcomment %}
+        <a class="nav-btn {% if request and request.path == '/exercise/' %}active{% endif %}" href="{% url 'exercise' %}">Упражнение</a>
+        <a class="nav-btn {% if request and request.path == '/exercise-statistics/' %}active{% endif %}" href="{% url 'exercise_statistics' %}">Статистика</a>
+      </nav>
+      <script>
+        (function(){
+          var anyActive = document.querySelector('.nav-btn.active');
+          if (!anyActive) {
+            var path = window.location.pathname;
+            document.querySelectorAll('.nav-btn').forEach(function(el){
+              if (el.getAttribute('href') === path) el.classList.add('active');
+            });
+          }
+        })();
+      </script>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <span>© 2025 Diving Timer</span>
+        <nav class="footer-nav">
+          {% comment %} <a href="/privacy/">Политика</a> {% endcomment %}
+          <a href="https://github.com/yourname/diving_timer_web" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+
