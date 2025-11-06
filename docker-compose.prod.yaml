@@ -1,42 +1,42 @@
 services:
-  postgres_diving_timer:
+  postgres_diving_timer_prod:
     image: postgres:${POSTGRES_VERSION}
-    container_name: postgres_diving_timer
+    container_name: postgres_diving_timer_prod
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
+    ports: 
       - "${DB_PORT}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    volumes: 
+      - postgres_vol:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 30s
       retries: 5
       start_period: 30s
 
-  django_diving_timer:
+  django_diving_timer_prod:
     build: .
-    container_name: django_diving_timer
+    container_name: django_diving_timer_prod
     command: python "./diving_timer/manage.py" runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
     environment:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: postgres_diving_timer
-      DB_PORT: ${DB_PORT}
+      DB_HOST: postgres_diving_timer_prod
+      DB_PORT: 5432
+      DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+    ports:
+      - "8001:8000"
     depends_on:
-      postgres_diving_timer:
+      postgres_diving_timer_prod:
         condition: service_healthy
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_vol:
