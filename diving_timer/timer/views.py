@@ -3,12 +3,15 @@ from django.shortcuts import render
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "timer/index.html")
+    """Вьюха на index страницу."""
+    return render(request, 'timer/index.html')
 
 
 def exercise(request: HttpRequest) -> HttpResponse:
-    return render(request, "timer/exercise.html")
+    """Вьюха на exercise страницу."""
+    return render(request, 'timer/exercise.html')
 
 
 def exercise_statistics(request: HttpRequest) -> HttpResponse:
-    return render(request, "timer/exercise_statistics.html")
+    """Вьюха на exercise_statistics страницу."""
+    return render(request, 'timer/exercise_statistics.html')
