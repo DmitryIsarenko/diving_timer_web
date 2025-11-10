@@ -57,6 +57,9 @@ coverage.xml
 *.cover
 *.py,cover
 
+# ruff
+.ruff_cache/
+
 # MyPy
 .mypy_cache/
 .dmypy.json
@@ -74,6 +77,12 @@ celerybeat.pid
 # Backup files
 *.bak
 *.tmp
+
+# Distribution / packaging
+*.egg-info/
+build/
+dist/
+*.egg
 
 # Folder-specific ignore
 # folders
