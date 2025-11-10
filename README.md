@@ -33,17 +33,20 @@ A web application for systematic breath-holding training using controlled breath
 ## 🚀 Quick Start with Docker
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/DmitryIsarenko/diving_timer_web.git
    cd diving_timer_web
    ```
 
 2. **Create environment file:**
+
    ```bash
    cp .env.example .env
    ```
 
    Edit the `.env` file with your values:
+
    ```env
    DB_NAME=diving_timer
    DB_USER=diving_timer_user
@@ -54,8 +57,9 @@ A web application for systematic breath-holding training using controlled breath
    ```
 
 3. **Launch the application:**
+
    ```bash
-   docker-compose up --build
+   docker-compose -f docker-compose.prod.yaml up -d --build
    ```
 
 4. **Open in browser:**
@@ -66,6 +70,7 @@ A web application for systematic breath-holding training using controlled breath
 ## 🏃‍♂️ Local Development
 
 1. **Create a virtual environment:**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # Linux/Mac
@@ -74,24 +79,26 @@ A web application for systematic breath-holding training using controlled breath
    ```
 
 2. **Install dependencies:**
+
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
 3. **Configure the database:**
+
    - Install PostgreSQL locally
-   - Create a database and user
+   - Install Docker locally
    - Update environment variables in `.env`
 
-4. **Run migrations:**
+4. **Launch the application:**
+
    ```bash
-   cd diving_timer
-   python manage.py migrate
+   docker-compose -f docker-compose.yaml up -d --build
    ```
 
-5. **Start development server:**
-   ```bash
-   python manage.py runserver
+5. **Open in browser:**
+   ```
+   http://localhost:8000
    ```
 
 ## 📖 Usage
@@ -138,30 +145,30 @@ docker-compose exec django_diving_timer python manage.py shell
 
 ```
 diving_timer_web/
-├── diving_timer/           # Main Django application
-│   ├── diving_timer/       # Project settings
+├── diving_timer/          # Main Django application
+│   ├── diving_timer/      # Project settings
 │   ├── timer/             # Timer application
 │   │   ├── static/        # CSS and JavaScript
 │   │   ├── templates/     # HTML templates
 │   │   └── ...
 │   └── manage.py
-├── docker-compose.yaml     # Docker configuration
-├── dockerfile             # Docker image
-├── requirements.txt       # Python dependencies
+├── docker-compose.yaml   # Docker configuration
+├── dockerfile            # Docker image
+├── pyproject.toml        # Project dependencies
 ├── .env.example          # Environment variables example
 └── README.md
 ```
 
 ## 🔧 Environment Variables
 
-| Variable | Description | Default Value |
-|----------|-------------|---------------|
-| `DB_NAME` | Database name | diving_timer |
-| `DB_USER` | Database user | diving_timer_user |
-| `DB_PASSWORD` | Database password | - |
-| `DB_HOST` | Database host | localhost |
-| `DB_PORT` | Database port | 5432 |
-| `POSTGRES_VERSION` | PostgreSQL version | 18 |
+| Variable           | Description        | Default Value     |
+| ------------------ | ------------------ | ----------------- |
+| `DB_NAME`          | Database name      | diving_timer      |
+| `DB_USER`          | Database user      | diving_timer_user |
+| `DB_PASSWORD`      | Database password  | -                 |
+| `DB_HOST`          | Database host      | localhost         |
+| `DB_PORT`          | Database port      | 5432              |
+| `POSTGRES_VERSION` | PostgreSQL version | 18                |
 
 ## 🎯 Future Goals
 

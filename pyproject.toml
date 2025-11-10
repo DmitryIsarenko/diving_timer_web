@@ -2,10 +2,11 @@
 requires = ["setuptools", "wheel"]
 
 [project]
-name = "your-project-name"
+name = "diving_timer_web"
 version = "0.1.0"
 description = """
-Description
+A web application for systematic breath-holding training using controlled breathing methodology.
+Designed for freediving and other respiratory practices.
 """
 readme = "README.md"
 
@@ -37,8 +38,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourname/your-project"
-Repository = "https://github.com/yourname/your-project"
+Homepage = "https://github.com/DmitryIsarenko/diving_timer_web"
+Repository = "https://github.com/DmitryIsarenko/diving_timer_web"
 
 [tool.ruff]
 # Поддержка версии Python
