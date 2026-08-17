@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 
@@ -8,11 +9,12 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'dev-insecure-key-change-me'
+SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', False)
 
-ALLOWED_HOSTS: list[str] = []
+raw_hosts: str = os.getenv('DJANGO_ALLOWED_HOSTS') or 'localhost, 127.0.0.1'
+ALLOWED_HOSTS = [host for host in raw_hosts.split(sep=',') if host.strip()]
 
 
 INSTALLED_APPS = [
@@ -72,12 +74,6 @@ DATABASES = {
     },
 }
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    # "0.0.0.0",
-    'django_diving_timer',
-]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
