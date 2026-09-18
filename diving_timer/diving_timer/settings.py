@@ -7,11 +7,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def parse_bool(value: str | None, default: bool = False) -> bool:
+    """Parse a boolean variable from environmental variable."""
+    if not value:
+        return default
+
+    normalized_value = value.lower().strip()
+
+    if normalized_value in ('1', 'yes', 'y', 'true', 'on'):
+        return True
+    if normalized_value in ('0', 'no', 'n', 'false', 'off'):
+        return False
+
+    raise ValueError(f'Invalid boolean value {value!r}')
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
-DEBUG = os.getenv('DEBUG', False)
+DEBUG = parse_bool(os.getenv('DEBUG'))
 
 raw_hosts: str = os.getenv('DJANGO_ALLOWED_HOSTS') or 'localhost, 127.0.0.1'
 ALLOWED_HOSTS = [host for host in raw_hosts.split(sep=',') if host.strip()]
