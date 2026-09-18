@@ -22,7 +22,7 @@ dependencies = [
   "asgiref==3.10.0",
   "Django==5.0.6",
   "pathspec==0.12.1",
-  "psycopg==3.2.12",
+  "psycopg[binary]==3.2.12",
   "python-dotenv==1.2.1",
   "sqlparse==0.5.3",
   "tzdata==2025.2",
