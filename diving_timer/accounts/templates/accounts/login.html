@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container">
+    <div class="card">
+      <h2>Вход</h2>
+
+      {% if form.non_field_errors %}
+        <div role="alert">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" class="stack">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="nav-btn">
+          Войти
+        </button>
+      </form>
+
+      <p>
+        Нет аккаунта?
+        <a href="{% url 'register' %}">
+          Зарегистрироваться
+        </a>
+      </p>
+    </div>
+  </section>
+{% endblock %}
