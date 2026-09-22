@@ -43,7 +43,7 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: list[str] = []
 
     def save(self, *args: object, **kwargs: object) -> None:
         """Custom user saving method."""

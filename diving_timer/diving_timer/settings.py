@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # project apps
     'accounts.apps.AccountsConfig',
-    'timer.apps.TimerConfig',
+    'training.apps.TrainingConfig',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
