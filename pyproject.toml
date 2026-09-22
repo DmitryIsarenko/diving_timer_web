@@ -80,6 +80,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "diving_timer/manage.py" = ["E501"]
 "diving_timer/diving_timer/settings.py" = ["E501"]
+"diving_timer/accounts/migrations/*" = ["ALL"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

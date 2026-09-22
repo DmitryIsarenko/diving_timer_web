@@ -12,6 +12,7 @@ def exercise(request: HttpRequest) -> HttpResponse:
     """Вьюха на exercise страницу."""
     return render(request, 'training/exercise.html')
 
+
 @login_required
 def exercise_statistics(request: HttpRequest) -> HttpResponse:
     """Вьюха на exercise_statistics страницу."""

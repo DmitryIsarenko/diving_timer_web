@@ -40,9 +40,12 @@ class RegistrationForm(forms.ModelForm):
         email: str = self.cleaned_data['email']
         return email.strip().lower()
 
-    def clean(self) -> dict:
+    def clean(self) -> dict | None:
         """Check that passwords are equal."""
-        cleaned_data: dict = super().clean()
+        cleaned_data = super().clean()
+
+        if cleaned_data is None:
+            return None
 
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
