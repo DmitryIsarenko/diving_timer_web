@@ -46,7 +46,7 @@ Repository = "https://github.com/DmitryIsarenko/diving_timer_web"
 [tool.ruff]
 # Поддержка версии Python
 target-version = "py312"
-line-length = 120
+line-length = 79
 fix = true
 
 # Линтинг
