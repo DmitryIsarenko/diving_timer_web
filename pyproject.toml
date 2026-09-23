@@ -81,6 +81,7 @@ ignore = [
 "diving_timer/manage.py" = ["E501"]
 "diving_timer/diving_timer/settings.py" = ["E501"]
 "diving_timer/accounts/migrations/*" = ["ALL"]
+"diving_timer/training/migrations/*" = ["ALL"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
