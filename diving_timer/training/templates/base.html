@@ -18,12 +18,32 @@
               href="{% url 'index' %}">
               Главная
             </a>
+            <div class="training-menu">
+              <a
+                class="nav-btn {% if request and request.path|slice:':11' == '/trainings/' %}active{% endif %}"
+                href="{% url 'trainings' %}"
+              >
+                Тренировки
+              </a>
 
-            <a class="nav-btn {% if request and request.path == '/exercise/' %}active{% endif %}"
-              href="{% url 'exercise' %}">
-              Упражнение
-            </a>
+              <button
+                id="training-menu-toggle"
+                class="training-menu-toggle"
+                type="button"
+                aria-label="Открыть меню тренировок"
+                aria-expanded="false"
+                aria-controls="training-menu-list"
+              >
+                <span aria-hidden="true">▼</span>
+              </button>
 
+              <div id="training-menu-list" class="training-menu-list">
+                <a href="{% url 'trainings' %}">Все тренировки</a>
+                <a href="{% url 'four_step_breathing' %}">
+                  Циклическая четырёхфазная тренировка
+                </a>
+              </div>
+            </div>
             <a class="nav-btn {% if request and request.path == '/exercise-statistics/' %}active{% endif %}"
               href="{% url 'exercise_statistics' %}">
               Статистика
@@ -69,6 +89,50 @@
         </nav>
       </div>
     </footer>
+    <script>
+      (function () {
+        var trainingMenu = document.querySelector('.training-menu');
+        var trainingMenuToggle = document.getElementById('training-menu-toggle');
+
+        if (!trainingMenu || !trainingMenuToggle) {
+          return;
+        }
+
+        function closeTrainingMenu() {
+          trainingMenu.classList.remove('is-open');
+          trainingMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function openTrainingMenu() {
+          trainingMenu.classList.add('is-open');
+          trainingMenuToggle.setAttribute('aria-expanded', 'true');
+        }
+
+        trainingMenuToggle.addEventListener('click', function () {
+          if (trainingMenu.classList.contains('is-open')) {
+            closeTrainingMenu();
+            return;
+          }
+
+          openTrainingMenu();
+        });
+
+        document.addEventListener('click', function (event) {
+          if (!trainingMenu.contains(event.target)) {
+            closeTrainingMenu();
+          }
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key !== 'Escape') {
+            return;
+          }
+
+          closeTrainingMenu();
+          trainingMenuToggle.focus();
+        });
+      })();
+    </script>
   </body>
   </html>
 

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container trainings-page">
+    <div class="trainings-page__header">
+      <h2>Тренировки</h2>
+      <p>
+        Выберите тренировку, настройте параметры и запустите таймер.
+      </p>
+    </div>
+
+    <div class="trainings-grid">
+      <article class="training-card">
+        <h3>Циклическая четырёхфазная тренировка</h3>
+
+        <p>
+          Дыхательный цикл состоит из вдоха, задержки после вдоха,
+          выдоха и необязательной задержки после выдоха.
+        </p>
+
+        <ul class="training-card__features">
+          <li>Настраиваемая длительность каждой фазы.</li>
+          <li>Настраиваемое количество кругов.</li>
+          <li>Визуальный таймер и голосовые подсказки.</li>
+        </ul>
+
+        <a class="nav-btn" href="{% url 'four_step_breathing' %}">
+          Открыть тренировку
+        </a>
+      </article>
+    </div>
+  </section>
+{% endblock %}

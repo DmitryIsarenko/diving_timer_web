@@ -179,8 +179,123 @@ header nav { margin-top: 0; }
       flex-direction: column;
       align-items: center;
   }
-  
+
   .home-controls .nav-btn {
       min-width: 250px;
   }
+}
+
+/* Trainings navigation dropdown */
+.training-menu {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.training-menu > .nav-btn {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.training-menu-toggle {
+  appearance: none;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #1a7fdc;
+  border-left: 0;
+  border-bottom-right-radius: 999px;
+  border-top-right-radius: 999px;
+  background: #1e90ff;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+}
+
+.training-menu-toggle:hover,
+.training-menu-toggle:focus-visible {
+  background: #167ad6;
+}
+
+.training-menu-toggle:focus-visible,
+.training-menu-list a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.training-menu-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  display: none;
+  min-width: 18rem;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+}
+
+.training-menu-list a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #0a2540;
+  text-decoration: none;
+}
+
+.training-menu-list a:hover,
+.training-menu-list a:focus-visible {
+  background: #e0f2fe;
+}
+
+.training-menu:hover .training-menu-list,
+.training-menu:focus-within .training-menu-list,
+.training-menu.is-open .training-menu-list {
+  display: block;
+}
+
+/* Trainings catalogue */
+.trainings-page {
+  padding-bottom: 32px;
+  padding-top: 24px;
+}
+
+.trainings-page__header {
+  max-width: 42rem;
+}
+
+.trainings-page__header p {
+  color: #475569;
+}
+
+.trainings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.training-card {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.training-card h3 {
+  margin-top: 0;
+  color: #0a2540;
+}
+
+.training-card p,
+.training-card__features {
+  color: #475569;
+}
+
+.training-card__features {
+  margin-bottom: 20px;
+  padding-left: 20px;
 }

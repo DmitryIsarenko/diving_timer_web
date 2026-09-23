@@ -4,18 +4,18 @@
     <section class="home-stack">
         <h2 class="home-title">Тренажер задержки дыхания</h2>
         <p class="home-subtitle">Систематическая тренировка дыхательной системы по контролируемой методике</p>
-        
+
         <div class="home-features grid-3">
             <div class="card home-card">
                 <h3 class="card-title">4-этапный цикл</h3>
                 <p>Вдох → Задержка → Выдох → Задержка. Полный контроль длительности каждого этапа</p>
             </div>
-            
+
             <div class="card home-card">
                 <h3 class="card-title">Голосовое сопровождение</h3>
                 <p>Аудио-подсказки для точного соблюдения временных интервалов</p>
             </div>
-            
+
             <div class="card home-card">
                 <h3 class="card-title">Статистика прогресса</h3>
                 <p>Отслеживание результатов и динамики тренировок</p>
@@ -24,7 +24,10 @@
 
         <div class="home-controls controls">
             {% comment %} {% if user.is_authenticated %} {% endcomment %}
-            <a href="{% url 'exercise' %}" class="nav-btn">Начать тренировку</a>
+            <a href="{% url 'trainings' %}" class="nav-btn">
+                Выбрать тренировку
+            </a>
+
             <a href="{% url 'exercise_statistics' %}" class="nav-btn nav-btn--secondary">Моя статистика</a>
             {% comment %} {% else %} {% endcomment %}
                 {% comment %} <a href="{% url 'login' %}" class="nav-btn">Войти для начала тренировки</a> {% endcomment %}
