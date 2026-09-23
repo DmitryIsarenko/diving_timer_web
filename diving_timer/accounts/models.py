@@ -3,6 +3,8 @@ from typing import Any, ClassVar
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .managers import CustomUserManager
+
 
 class User(AbstractUser):
     """Altered model, based on AbstractUser."""
@@ -46,6 +48,7 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS: ClassVar[list[str]] = []
+    objects = CustomUserManager()
 
     def save(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Custom user saving method."""
