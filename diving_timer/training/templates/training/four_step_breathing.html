@@ -3,27 +3,73 @@
   <section class="container">
     <h2>Циклическая четырёхфазная тренировка</h2>
     <div class="stack">
-      <form id="exercise-form" class="exercise-form">
+      <form
+        id="exercise-form"
+        class="exercise-form"
+        data-start-url="{% url 'start_four_step_breathing_exercise' %}"
+        data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+      >
+        {% csrf_token %}
+
         <div class="grid-2">
           <div class="field">
             <label for="inhaleSec">Вдох (сек)</label>
-            <input id="inhaleSec" name="inhaleSec" type="number" min="1" step="1" value="4" required>
+            <input
+              id="inhaleSec"
+              name="inhale_duration_seconds"
+              type="number"
+              min="1"
+              step="1"
+              value="4"
+              required
+            >
           </div>
           <div class="field">
             <label for="holdInSec">Задержка на вдохе (сек)</label>
-            <input id="holdInSec" name="holdInSec" type="number" min="1" step="1" value="4" required>
+            <input
+              id="holdInSec"
+              name="inhale_hold_duration_seconds"
+              type="number"
+              min="1"
+              step="1"
+              value="4"
+              required
+            >
           </div>
           <div class="field">
             <label for="exhaleSec">Выдох (сек)</label>
-            <input id="exhaleSec" name="exhaleSec" type="number" min="1" step="1" value="4" required>
+            <input
+              id="exhaleSec"
+              name="exhale_duration_seconds"
+              type="number"
+              min="1"
+              step="1"
+              value="4"
+              required
+            >
           </div>
           <div class="field">
             <label for="holdOutSec">Задержка на выдохе (сек, опционально)</label>
-            <input id="holdOutSec" name="holdOutSec" type="number" min="0" step="1" value="0">
+            <input
+              id="holdOutSec"
+              name="exhale_hold_duration_seconds"
+              type="number"
+              min="0"
+              step="1"
+              value="0"
+            >
           </div>
           <div class="field">
             <label for="rounds">Круги</label>
-            <input id="rounds" name="rounds" type="number" min="1" step="1" value="10" required>
+            <input
+              id="rounds"
+              name="round_count"
+              type="number"
+              min="1"
+              step="1"
+              value="10"
+              required
+            >
           </div>
         </div>
 

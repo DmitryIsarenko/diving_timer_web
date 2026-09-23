@@ -1,25 +1,32 @@
 // Breathing exercise logic: 4 phases (last optional), with TTS, pause/resume, and total/phase countdowns
 (function () {
-  'use strict';
+  "use strict";
 
   // Elements
-  var el = function (id) { return document.getElementById(id); };
-  var inhaleInput = el('inhaleSec');
-  var holdInInput = el('holdInSec');
-  var exhaleInput = el('exhaleSec');
-  var holdOutInput = el('holdOutSec');
-  var roundsInput = el('rounds');
+  var el = function (id) {
+    return document.getElementById(id);
+  };
 
-  var startBtn = el('startBtn');
-  var pauseBtn = el('pauseBtn');
-  var resetBtn = el('resetBtn');
-  var toStats = el('toStats');
+  var exerciseForm = el("exercise-form");
+  var startUrl = exerciseForm.dataset.startUrl;
+  var isAuthenticated = exerciseForm.dataset.isAuthenticated === "true";
 
-  var currentPhaseEl = el('currentPhase');
-  var phaseRemainingEl = el('phaseRemaining');
-  var totalRemainingEl = el('totalRemaining');
-  var roundInfoEl = el('roundInfo');
-  var totalPlannedEl = el('totalPlanned');
+  var inhaleInput = el("inhaleSec");
+  var holdInInput = el("holdInSec");
+  var exhaleInput = el("exhaleSec");
+  var holdOutInput = el("holdOutSec");
+  var roundsInput = el("rounds");
+
+  var startBtn = el("startBtn");
+  var pauseBtn = el("pauseBtn");
+  var resetBtn = el("resetBtn");
+  var toStats = el("toStats");
+
+  var currentPhaseEl = el("currentPhase");
+  var phaseRemainingEl = el("phaseRemaining");
+  var totalRemainingEl = el("totalRemaining");
+  var roundInfoEl = el("roundInfo");
+  var totalPlannedEl = el("totalPlanned");
 
   // State
   var timerId = null;
@@ -32,19 +39,28 @@
   var totalDeadline = 0; // ms
   var remainingPhaseMs = 0; // used for pause/resume
   var remainingTotalMs = 0; // used for pause/resume
+  var trainingId = null;
 
   // TTS
   var voice = null;
   function pickVoice() {
     try {
-      var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+      var voices = window.speechSynthesis
+        ? window.speechSynthesis.getVoices()
+        : [];
       if (!voices || voices.length === 0) return;
-      var ru = voices.find(function (v) { return (v.lang || '').toLowerCase().startsWith('ru'); });
+      var ru = voices.find(function (v) {
+        return (v.lang || "").toLowerCase().startsWith("ru");
+      });
       voice = ru || voices[0];
-    } catch (_) { /* noop */ }
+    } catch (_) {
+      /* noop */
+    }
   }
   if (window.speechSynthesis) {
-    window.speechSynthesis.onvoiceschanged = function () { pickVoice(); };
+    window.speechSynthesis.onvoiceschanged = function () {
+      pickVoice();
+    };
     pickVoice();
   }
   function speak(text) {
@@ -52,10 +68,12 @@
       if (!window.speechSynthesis) return;
       var utter = new SpeechSynthesisUtterance(text);
       if (voice) utter.voice = voice;
-      utter.lang = voice && voice.lang ? voice.lang : 'ru-RU';
+      utter.lang = voice && voice.lang ? voice.lang : "ru-RU";
       window.speechSynthesis.cancel(); // ensure no overlap
       window.speechSynthesis.speak(utter);
-    } catch (_) { /* noop */ }
+    } catch (_) {
+      /* noop */
+    }
   }
 
   // Utils
@@ -68,7 +86,7 @@
     var totalSec = Math.max(0, Math.floor(ms / 1000));
     var m = Math.floor(totalSec / 60);
     var s = totalSec % 60;
-    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
   }
   function formatHHMMSS(ms) {
     var totalSec = Math.max(0, Math.floor(ms / 1000));
@@ -76,11 +94,21 @@
     var remainder = totalSec % 3600;
     var m = Math.floor(remainder / 60);
     var s = remainder % 60;
-    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    return (
+      String(h).padStart(2, "0") +
+      ":" +
+      String(m).padStart(2, "0") +
+      ":" +
+      String(s).padStart(2, "0")
+    );
   }
 
   function computePlannedTotalMs(values) {
-    var perRound = values.inhale + values.holdIn + values.exhale + (values.holdOutOptional ? values.holdOut : 0);
+    var perRound =
+      values.inhale +
+      values.holdIn +
+      values.exhale +
+      (values.holdOutOptional ? values.holdOut : 0);
     return perRound * values.rounds * 1000;
   }
 
@@ -96,7 +124,7 @@
       exhale: exhale,
       holdOut: holdOut,
       holdOutOptional: holdOut > 0,
-      rounds: rounds
+      rounds: rounds,
     };
   }
 
@@ -108,24 +136,29 @@
     var plannedMs = computePlannedTotalMs(v);
     totalPlannedEl.textContent = formatHHMMSS(plannedMs);
     // Round info pre-start
-    roundInfoEl.textContent = '0 / ' + String(v.rounds);
+    roundInfoEl.textContent = "0 / " + String(v.rounds);
     return valid;
   }
 
   function buildPhases(values) {
     var p = [
-      { key: 'inhale', name: 'Вдох', seconds: values.inhale },
-      { key: 'holdIn', name: 'Задержка на вдохе', seconds: values.holdIn },
-      { key: 'exhale', name: 'Выдох', seconds: values.exhale }
+      { key: "inhale", name: "Вдох", seconds: values.inhale },
+      { key: "holdIn", name: "Задержка на вдохе", seconds: values.holdIn },
+      { key: "exhale", name: "Выдох", seconds: values.exhale },
     ];
     if (values.holdOutOptional) {
-      p.push({ key: 'holdOut', name: 'Задержка на выдохе', seconds: values.holdOut });
+      p.push({
+        key: "holdOut",
+        name: "Задержка на выдохе",
+        seconds: values.holdOut,
+      });
     }
     return p;
   }
 
   function setControlsOnStart() {
-    running = true; paused = false;
+    running = true;
+    paused = false;
     startBtn.disabled = true;
     pauseBtn.disabled = false;
     resetBtn.disabled = false;
@@ -139,10 +172,11 @@
   }
 
   function setControlsOnStop() {
-    running = false; paused = false;
+    running = false;
+    paused = false;
     startBtn.disabled = !validateInputs();
     pauseBtn.disabled = true;
-    pauseBtn.textContent = 'Пауза';
+    pauseBtn.textContent = "Пауза";
     resetBtn.disabled = true;
     inhaleInput.disabled = false;
     holdInInput.disabled = false;
@@ -152,14 +186,14 @@
   }
 
   function enableStatsLink() {
-    toStats.classList.remove('disabled-link');
-    toStats.removeAttribute('aria-disabled');
-    toStats.removeAttribute('tabindex');
+    toStats.classList.remove("disabled-link");
+    toStats.removeAttribute("aria-disabled");
+    toStats.removeAttribute("tabindex");
   }
   function disableStatsLink() {
-    toStats.classList.add('disabled-link');
-    toStats.setAttribute('aria-disabled', 'true');
-    toStats.setAttribute('tabindex', '-1');
+    toStats.classList.add("disabled-link");
+    toStats.setAttribute("aria-disabled", "true");
+    toStats.setAttribute("tabindex", "-1");
   }
 
   function startTimerLoop() {
@@ -167,7 +201,10 @@
     timerId = setInterval(tick, 250);
   }
   function stopTimerLoop() {
-    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
   }
 
   function startPhase(index) {
@@ -187,7 +224,8 @@
     // round finished
     if (currentRound < values.rounds) {
       currentRound += 1;
-      roundInfoEl.textContent = String(currentRound) + ' / ' + String(values.rounds);
+      roundInfoEl.textContent =
+        String(currentRound) + " / " + String(values.rounds);
     }
     if (currentRound >= values.rounds) {
       // completed all rounds
@@ -229,9 +267,9 @@
 
   function resetUI() {
     stopTimerLoop();
-    currentPhaseEl.textContent = '—';
-    phaseRemainingEl.textContent = '00:00';
-    totalRemainingEl.textContent = '00:00:00';
+    currentPhaseEl.textContent = "—";
+    phaseRemainingEl.textContent = "00:00";
+    totalRemainingEl.textContent = "00:00:00";
     disableStatsLink();
     setControlsOnStop();
   }
@@ -239,24 +277,60 @@
   // Keep a snapshot of values used for current run
   var cachedValues = null;
 
-  function handleStart() {
-    if (running) return;
-    if (!validateInputs()) return;
+  function startLocalTimer() {
     disableStatsLink();
     cachedValues = readInputs();
     phases = buildPhases(cachedValues);
     currentRound = 1;
-    roundInfoEl.textContent = String(currentRound) + ' / ' + String(cachedValues.rounds);
+    roundInfoEl.textContent =
+      String(currentRound) + " / " + String(cachedValues.rounds);
     setControlsOnStart();
 
     var now = performance.now();
-    // totalDeadline accounts for entire remaining duration from this moment
-    var perRoundSec = phases.reduce(function (acc, p) { return acc + p.seconds; }, 0);
+    var perRoundSec = phases.reduce(function (acc, phase) {
+      return acc + phase.seconds;
+    }, 0);
     var totalSec = perRoundSec * cachedValues.rounds;
-    totalDeadline = now + totalSec * 1000;
 
+    totalDeadline = now + totalSec * 1000;
     startPhase(0);
     startTimerLoop();
+  }
+
+  async function createTraining() {
+    var response = await fetch(startUrl, {
+      method: "POST",
+      body: new FormData(exerciseForm),
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      throw new Error("Не удалось сохранить тренировку.");
+    }
+
+    return response.json();
+  }
+
+  async function handleStart() {
+    if (running || !validateInputs()) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      startLocalTimer();
+      return;
+    }
+
+    startBtn.disabled = true;
+
+    try {
+      var data = await createTraining();
+      trainingId = data.training_id;
+      startLocalTimer();
+    } catch (_) {
+      startBtn.disabled = false;
+      window.alert("Не удалось сохранить тренировку. Попробуйте ещё раз.");
+    }
   }
 
   function handlePause() {
@@ -268,17 +342,22 @@
       remainingTotalMs = Math.max(0, Math.round(totalDeadline - now));
       stopTimerLoop();
       paused = true;
-      pauseBtn.textContent = 'Продолжить';
+      pauseBtn.textContent = "Продолжить";
     } else {
       // resume: restart round from inhale
       var now2 = performance.now();
       currentPhaseIndex = 0;
       startPhase(0); // sets phaseDeadline and announces inhale
-      var perRoundSec = phases.reduce(function (acc, p) { return acc + p.seconds; }, 0);
-      var remainingRounds = Math.max(0, (cachedValues ? cachedValues.rounds : 0) - currentRound + 1);
-      totalDeadline = now2 + (remainingRounds * perRoundSec * 1000);
+      var perRoundSec = phases.reduce(function (acc, p) {
+        return acc + p.seconds;
+      }, 0);
+      var remainingRounds = Math.max(
+        0,
+        (cachedValues ? cachedValues.rounds : 0) - currentRound + 1,
+      );
+      totalDeadline = now2 + remainingRounds * perRoundSec * 1000;
       paused = false;
-      pauseBtn.textContent = 'Пауза';
+      pauseBtn.textContent = "Пауза";
       startTimerLoop();
     }
   }
@@ -293,17 +372,17 @@
   }
 
   // Wire events
-  [inhaleInput, holdInInput, exhaleInput, holdOutInput, roundsInput].forEach(function (input) {
-    input.addEventListener('input', validateInputs);
-    input.addEventListener('change', validateInputs);
-  });
-  startBtn.addEventListener('click', handleStart);
-  pauseBtn.addEventListener('click', handlePause);
-  resetBtn.addEventListener('click', handleReset);
+  [inhaleInput, holdInInput, exhaleInput, holdOutInput, roundsInput].forEach(
+    function (input) {
+      input.addEventListener("input", validateInputs);
+      input.addEventListener("change", validateInputs);
+    },
+  );
+  startBtn.addEventListener("click", handleStart);
+  pauseBtn.addEventListener("click", handlePause);
+  resetBtn.addEventListener("click", handleReset);
 
   // Initial UI state
   disableStatsLink();
   validateInputs();
 })();
-
-

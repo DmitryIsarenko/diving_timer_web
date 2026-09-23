@@ -1,6 +1,16 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.db import transaction
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    JsonResponse,
+)
+from django.shortcuts import render
+from django.views.decorators.http import require_POST
+
+from .forms import FourStepBreathingExerciseStartForm
+from .models import FourStepBreathingExercise, Training
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -18,9 +28,35 @@ def four_step_breathing_exercise(request: HttpRequest) -> HttpResponse:
     return render(request, 'training/four_step_breathing.html')
 
 
-def start_four_step_breathing_exercise(request: HttpRequest) -> HttpResponse:
+@login_required
+@require_POST
+def start_four_step_breathing_exercise(request: HttpRequest) -> JsonResponse:
     """View for starting an exercise as an authorized user."""
-    return redirect('training')
+    form = FourStepBreathingExerciseStartForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(
+            {'errors': form.errors.get_json_data()},
+            status=400,
+        )
+
+    with transaction.atomic():
+        exercise = FourStepBreathingExercise.objects.create(
+            **form.cleaned_data
+        )
+        training = Training.objects.create(
+            user=request.user,
+            exercise=exercise,
+            status='in_progress',
+        )
+
+    return JsonResponse(
+        {
+            'training_id': training.pk,
+            'status': training.status,
+        },
+        status=201,
+    )
 
 
 @login_required
