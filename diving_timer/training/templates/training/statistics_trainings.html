@@ -42,30 +42,30 @@
     <section class="statistics-section">
       <h3>Статистика по упражнениям</h3>
 
-      {% if exercise_statistics %}
+      {% if training_statistics_by_type %}
         <div class="trainings-grid">
-          {% for exercise_statistic in exercise_statistics %}
+          {% for training_statistic in training_statistics_by_type %}
             <article class="training-card">
-              <h4>{{ exercise_statistic.name }}</h4>
+              <h4>{{ training_statistic.name }}</h4>
 
               <dl class="statistics-list">
                 <div>
                   <dt>Всего запусков</dt>
-                  <dd>{{ exercise_statistic.total_trainings }}</dd>
+                  <dd>{{ training_statistic.total_trainings }}</dd>
                 </div>
                 <div>
                   <dt>Завершено</dt>
-                  <dd>{{ exercise_statistic.completed_trainings }}</dd>
+                  <dd>{{ training_statistic.completed_trainings }}</dd>
                 </div>
                 <div>
                   <dt>Отменено</dt>
-                  <dd>{{ exercise_statistic.cancelled_trainings }}</dd>
+                  <dd>{{ training_statistic.cancelled_trainings }}</dd>
                 </div>
               </dl>
 
               <a
                 class="nav-btn"
-                href="{% url 'exercise_statistics_by_exercise' exercise_type=exercise_statistic.exercise_type %}"
+                href="{% url 'exercise_statistics_by_exercise' exercise_type=training_statistic.exercise_type %}"
               >
                 Открыть историю
               </a>

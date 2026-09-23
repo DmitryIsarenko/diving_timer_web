@@ -37,7 +37,6 @@
             <thead>
               <tr>
                 <th scope="col">Дата запуска</th>
-                <th scope="col">Плановая длительность</th>
                 <th scope="col">Статус</th>
                 <th scope="col">
                   <span class="visually-hidden">Действие</span>
@@ -53,14 +52,11 @@
                       {{ training.created_at|date:'d.m.Y H:i' }}
                     </time>
                   </td>
-
-                  <td>{{ training.planned_duration }}</td>
-
                   <td>
                     <span
                       class="training-status training-status--{{ training.status }}"
                     >
-                      {{ training.status_label }}
+                      {{ training.get_status_display }}
                     </span>
                   </td>
 

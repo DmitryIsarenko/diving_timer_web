@@ -5,18 +5,19 @@ from django.db import models
 class Training(models.Model):
     """Class that describes training session."""
 
-    STATUS_CHOICES = [
-        ('not_started', 'not_started'),
-        ('in_progress', 'in_progress'),
-        ('paused', 'paused'),
-        ('completed', 'completed'),
-        ('cancelled', 'cancelled'),
-    ]
+    class Status(models.TextChoices):
+        """Model that describes status options."""
+
+        NOT_STARTED = 'not_started', 'Not started'
+        IN_PROGRESS = 'in_progress', 'In progress'
+        PAUSED = 'paused', 'Paused'
+        COMPLETED = 'completed', 'Completed'
+        CANCELLED = 'cancelled', 'Cancelled'
 
     status: models.CharField = models.CharField(
         verbose_name='status',
-        choices=STATUS_CHOICES,
-        default='not_started',
+        choices=Status.choices,
+        default=Status.NOT_STARTED,
         max_length=20,
     )
 
