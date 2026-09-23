@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container statistics-page">
+    <div class="statistics-page__header">
+      <a
+        class="back-link"
+        href="{% url 'exercise_statistics_by_exercise' exercise_type=exercise_type %}"
+      >
+        ← К истории упражнения
+      </a>
+
+      <h2>Тренировка от {{ training.created_at|date:'d.m.Y H:i' }}</h2>
+      <p>{{ exercise_name }}</p>
+    </div>
+
+    <div class="grid-3 indicators">
+      <article class="card">
+        <div class="card-title">Статус</div>
+        <div class="card-value">
+          <span
+            class="training-status training-status--{{ training.status }}"
+          >
+            {{ training.status_label }}
+          </span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">Плановая длительность</div>
+        <div class="card-value">{{ planned_duration }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">Тип упражнения</div>
+        <div class="card-value card-value--text">{{ exercise_name }}</div>
+      </article>
+    </div>
+
+    <section class="statistics-section">
+      <h3>Время сессии</h3>
+
+      <dl class="statistics-list statistics-list--details">
+        <div>
+          <dt>Создана</dt>
+          <dd>
+            <time datetime="{{ training.created_at|date:'c' }}">
+              {{ training.created_at|date:'d.m.Y H:i:s' }}
+            </time>
+          </dd>
+        </div>
+
+        {% if training.first_paused_at %}
+          <div>
+            <dt>Впервые поставлена на паузу</dt>
+            <dd>
+              <time datetime="{{ training.first_paused_at|date:'c' }}">
+                {{ training.first_paused_at|date:'d.m.Y H:i:s' }}
+              </time>
+            </dd>
+          </div>
+        {% endif %}
+
+        {% if training.completed_at %}
+          <div>
+            <dt>Завершена</dt>
+            <dd>
+              <time datetime="{{ training.completed_at|date:'c' }}">
+                {{ training.completed_at|date:'d.m.Y H:i:s' }}
+              </time>
+            </dd>
+          </div>
+        {% endif %}
+
+        {% if training.cancelled_at %}
+          <div>
+            <dt>Отменена</dt>
+            <dd>
+              <time datetime="{{ training.cancelled_at|date:'c' }}">
+                {{ training.cancelled_at|date:'d.m.Y H:i:s' }}
+              </time>
+            </dd>
+          </div>
+        {% endif %}
+      </dl>
+    </section>
+
+    <section class="statistics-section">
+      <h3>Параметры и результат упражнения</h3>
+
+      {% include detail_template %}
+    </section>
+  </section>
+{% endblock %}

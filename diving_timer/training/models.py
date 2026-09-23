@@ -58,6 +58,21 @@ class Training(models.Model):
 class Exercise(models.Model):
     """Basic model of exercise."""
 
+    class ExerciseType(models.TextChoices):
+        """Choises for exercise type."""
+
+        FOUR_STEP_BREATHING = (
+            'four_step_breathing',
+            'Циклическая четырёхфазная тренировка',
+        )
+        CO2_TABLE = 'co2_table', 'CO₂-таблица'
+        O2_TABLE = 'o2_table', 'O₂-таблица'
+
+    exercise_type: models.CharField = models.CharField(
+        max_length=100,
+        choices=ExerciseType.choices,
+    )
+
 
 class FourStepBreathingExercise(Exercise):
     """Store configuration for a four-step breathing exercise."""

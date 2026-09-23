@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container statistics-page">
+    <div class="statistics-page__header">
+      <h2>Моя статистика</h2>
+      <p>
+        Общая информация о сохранённых тренировках и история по каждому
+        виду упражнения.
+      </p>
+    </div>
+
+    <div class="grid-3 indicators">
+      <article class="card">
+        <div class="card-title">Всего тренировок</div>
+        <div class="card-value">{{ total_trainings }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">За последние 30 дней</div>
+        <div class="card-value">{{ trainings_last_30_days }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">Завершено</div>
+        <div class="card-value">{{ completed_trainings }}</div>
+      </article>
+    </div>
+
+    <div class="grid-2 indicators">
+      <article class="card">
+        <div class="card-title">Отменено</div>
+        <div class="card-value">{{ cancelled_trainings }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">В процессе</div>
+        <div class="card-value">{{ active_trainings }}</div>
+      </article>
+    </div>
+
+    <section class="statistics-section">
+      <h3>Статистика по упражнениям</h3>
+
+      {% if exercise_statistics %}
+        <div class="trainings-grid">
+          {% for exercise_statistic in exercise_statistics %}
+            <article class="training-card">
+              <h4>{{ exercise_statistic.name }}</h4>
+
+              <dl class="statistics-list">
+                <div>
+                  <dt>Всего запусков</dt>
+                  <dd>{{ exercise_statistic.total_trainings }}</dd>
+                </div>
+                <div>
+                  <dt>Завершено</dt>
+                  <dd>{{ exercise_statistic.completed_trainings }}</dd>
+                </div>
+                <div>
+                  <dt>Отменено</dt>
+                  <dd>{{ exercise_statistic.cancelled_trainings }}</dd>
+                </div>
+              </dl>
+
+              <a
+                class="nav-btn"
+                href="{% url 'exercise_statistics_by_exercise' exercise_type=exercise_statistic.exercise_type %}"
+              >
+                Открыть историю
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <article class="card">
+          <h3 class="card-title">Пока нет сохранённых тренировок</h3>
+          <p>
+            Запустите тренировку в авторизованном аккаунте, чтобы она появилась
+            в статистике.
+          </p>
+          <a class="nav-btn" href="{% url 'trainings' %}">
+            Выбрать тренировку
+          </a>
+        </article>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}

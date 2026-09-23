@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container statistics-page">
+    <div class="statistics-page__header">
+      <a class="back-link" href="{% url 'exercise_statistics' %}">
+        ← Ко всей статистике
+      </a>
+
+      <h2>{{ exercise_name }}</h2>
+      <p>История всех запусков этого упражнения.</p>
+    </div>
+
+    <div class="grid-3 indicators">
+      <article class="card">
+        <div class="card-title">Всего запусков</div>
+        <div class="card-value">{{ total_trainings }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">Завершено</div>
+        <div class="card-value">{{ completed_trainings }}</div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">Отменено</div>
+        <div class="card-value">{{ cancelled_trainings }}</div>
+      </article>
+    </div>
+
+    <section class="statistics-section">
+      <h3>История тренировок</h3>
+
+      {% if trainings %}
+        <div class="statistics-table-wrapper">
+          <table class="statistics-table">
+            <thead>
+              <tr>
+                <th scope="col">Дата запуска</th>
+                <th scope="col">Плановая длительность</th>
+                <th scope="col">Статус</th>
+                <th scope="col">
+                  <span class="visually-hidden">Действие</span>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for training in trainings %}
+                <tr>
+                  <td>
+                    <time datetime="{{ training.created_at|date:'c' }}">
+                      {{ training.created_at|date:'d.m.Y H:i' }}
+                    </time>
+                  </td>
+
+                  <td>{{ training.planned_duration }}</td>
+
+                  <td>
+                    <span
+                      class="training-status training-status--{{ training.status }}"
+                    >
+                      {{ training.status_label }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <a
+                      class="nav-btn nav-btn--secondary"
+                      href="{% url 'exercise_statistics_by_training' training_id=training.id %}"
+                    >
+                      Подробнее
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <article class="card">
+          <h3 class="card-title">Тренировок пока нет</h3>
+          <p>
+            Здесь появятся все запуски упражнения
+            «{{ exercise_name }}».
+          </p>
+        </article>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}
