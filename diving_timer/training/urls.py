@@ -8,6 +8,7 @@ from .views import (
     statistics_trainings_by_exercise,
     statistics_trainings_by_training,
     trainings,
+    update_training_status,
 )
 
 
@@ -42,5 +43,10 @@ urlpatterns = [
         'trainings/four_step_breathing/start/',
         start_four_step_breathing_exercise,
         name='start_four_step_breathing_exercise',
+    ),
+    path(
+        'trainings/<int:training_id>/status/',
+        update_training_status,
+        name='update_training_status',
     ),
 ]

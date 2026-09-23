@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from .forms import FourStepBreathingExerciseStartForm
+from .forms import FourStepBreathingExerciseStartForm, TrainingStatusActionForm
 from .models import Exercise, FourStepBreathingExercise, Training
 
 
@@ -184,3 +184,81 @@ def statistics_trainings_by_training(
         'detail_template': detail_template,
     }
     return render(request, 'training/statistics_by_training.html', context)
+
+
+@login_required
+@require_POST
+def update_training_status(
+    request: HttpRequest,
+    training_id: int,
+) -> JsonResponse:
+    """View for switching exercise statuses."""
+    form = TrainingStatusActionForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(
+            {'errors': form.errors.get_json_data()},
+            status=400,
+        )
+
+    with transaction.atomic():
+        training = get_object_or_404(
+            Training.objects.select_for_update(),
+            pk=training_id,
+            user=request.user,
+        )
+
+        if form.cleaned_data['action'] == 'pause':
+            if training.status != Training.Status.IN_PROGRESS:
+                return JsonResponse(
+                    {'error': 'Only an active training can be paused.'},
+                    status=409,
+                )
+            training.status = Training.Status.PAUSED
+
+            if training.first_paused_at is None:
+                training.first_paused_at = timezone.now()
+            training.save(update_fields=['status', 'first_paused_at'])
+
+        elif form.cleaned_data['action'] == 'resume':
+            if training.status != Training.Status.PAUSED:
+                return JsonResponse(
+                    {'error': 'Only a paused training can be resumed.'},
+                    status=409,
+                )
+            training.status = Training.Status.IN_PROGRESS
+            training.save(update_fields=['status'])
+
+        elif form.cleaned_data['action'] == 'complete':
+            if training.status != Training.Status.IN_PROGRESS:
+                return JsonResponse(
+                    {'error': 'Only an active training can be completed.'},
+                    status=409,
+                )
+            training.status = Training.Status.COMPLETED
+            training.completed_at = timezone.now()
+            training.save(update_fields=['status', 'completed_at'])
+
+        elif form.cleaned_data['action'] == 'cancel':
+            if training.status not in [
+                Training.Status.IN_PROGRESS,
+                Training.Status.PAUSED,
+            ]:
+                return JsonResponse(
+                    {
+                        'error': (
+                            'Only an active or paused '
+                            'training can be cancelled.'
+                        )
+                    },
+                    status=409,
+                )
+            training.status = Training.Status.CANCELLED
+            training.cancelled_at = timezone.now()
+            training.save(update_fields=['status', 'cancelled_at'])
+    return JsonResponse(
+        {
+            'training_id': training.pk,
+            'status': training.status,
+        }
+    )

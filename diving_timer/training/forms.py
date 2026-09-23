@@ -17,3 +17,16 @@ class FourStepBreathingExerciseStartForm(forms.Form):
         min_value=0
     )
     round_count: forms.IntegerField = forms.IntegerField(min_value=1)
+
+
+class TrainingStatusActionForm(forms.Form):
+    """Form to send data of switching states of an exercise."""
+
+    statuses = [
+        ('pause', 'Pause'),
+        ('resume', 'Resume'),
+        ('complete', 'Complete'),
+        ('cancel', 'Cancel'),
+    ]
+
+    action = forms.ChoiceField(choices=statuses)
