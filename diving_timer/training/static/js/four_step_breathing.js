@@ -9,6 +9,7 @@
 
   var exerciseForm = el("exercise-form");
   var startUrl = exerciseForm.dataset.startUrl;
+  var statusUrlTemplate = exerciseForm.dataset.statusUrlTemplate;
   var isAuthenticated = exerciseForm.dataset.isAuthenticated === "true";
 
   var inhaleInput = el("inhaleSec");
@@ -37,9 +38,9 @@
   var phases = [];
   var phaseDeadline = 0; // ms (performance.now reference)
   var totalDeadline = 0; // ms
-  var remainingPhaseMs = 0; // used for pause/resume
-  var remainingTotalMs = 0; // used for pause/resume
   var trainingId = null;
+  var statusRequestInProgress = false;
+  var completionInProgress = false;
 
   // TTS
   var voice = null;
@@ -237,6 +238,10 @@
   }
 
   function tick() {
+    if (statusRequestInProgress || completionInProgress) {
+      return;
+    }
+
     var now = performance.now();
     var phaseLeft = Math.max(0, Math.round(phaseDeadline - now));
     var totalLeft = Math.max(0, Math.round(totalDeadline - now));
@@ -248,6 +253,7 @@
       // move to next phase / round
       var values = cachedValues; // use snapshot from start
       advancePhaseOrRound(values);
+      return;
     }
 
     if (totalLeft <= 0) {
@@ -255,14 +261,37 @@
     }
   }
 
-  function complete() {
+  async function complete() {
+    if (completionInProgress || !running) {
+      return;
+    }
+
+    completionInProgress = true;
     stopTimerLoop();
-    running = false;
-    paused = false;
-    enableStatsLink();
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resetBtn.disabled = false; // allow viewing values after completion, but can reset
+
+    try {
+      if (trainingId !== null) {
+        await updateTrainingStatus("complete");
+      }
+
+      running = false;
+      paused = false;
+      enableStatsLink();
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      resetBtn.disabled = true;
+    } catch (_) {
+      running = false;
+      paused = false;
+      startBtn.disabled = true;
+      pauseBtn.disabled = true;
+      resetBtn.disabled = false;
+      window.alert(
+        "Не удалось сохранить завершение тренировки. Обновите страницу и проверьте статистику.",
+      );
+    } finally {
+      completionInProgress = false;
+    }
   }
 
   function resetUI() {
@@ -311,6 +340,30 @@
     return response.json();
   }
 
+  function getStatusUrl() {
+    return statusUrlTemplate.replace(
+      "/0/status/",
+      "/" + String(trainingId) + "/status/",
+    );
+  }
+
+  async function updateTrainingStatus(action) {
+    var formData = new FormData(exerciseForm);
+    formData.set("action", action);
+
+    var response = await fetch(getStatusUrl(), {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      throw new Error("Не удалось обновить статус тренировки.");
+    }
+
+    return response.json();
+  }
+
   async function handleStart() {
     if (running || !validateInputs()) {
       return;
@@ -333,42 +386,87 @@
     }
   }
 
-  function handlePause() {
-    if (!running) return;
+  async function handlePause() {
+    if (!running || statusRequestInProgress || completionInProgress) return;
+
+    statusRequestInProgress = true;
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+
     if (!paused) {
-      // pause
-      var now = performance.now();
-      remainingPhaseMs = Math.max(0, Math.round(phaseDeadline - now));
-      remainingTotalMs = Math.max(0, Math.round(totalDeadline - now));
-      stopTimerLoop();
-      paused = true;
-      pauseBtn.textContent = "Продолжить";
+      try {
+        if (trainingId !== null) {
+          await updateTrainingStatus("pause");
+        }
+
+        stopTimerLoop();
+        paused = true;
+        pauseBtn.textContent = "Продолжить";
+      } catch (_) {
+        window.alert("Не удалось поставить тренировку на паузу.");
+      }
     } else {
-      // resume: restart round from inhale
-      var now2 = performance.now();
-      currentPhaseIndex = 0;
-      startPhase(0); // sets phaseDeadline and announces inhale
-      var perRoundSec = phases.reduce(function (acc, p) {
-        return acc + p.seconds;
-      }, 0);
-      var remainingRounds = Math.max(
-        0,
-        (cachedValues ? cachedValues.rounds : 0) - currentRound + 1,
-      );
-      totalDeadline = now2 + remainingRounds * perRoundSec * 1000;
-      paused = false;
-      pauseBtn.textContent = "Пауза";
-      startTimerLoop();
+      try {
+        if (trainingId !== null) {
+          await updateTrainingStatus("resume");
+        }
+
+        var now = performance.now();
+        currentPhaseIndex = 0;
+        startPhase(0);
+        var perRoundSec = phases.reduce(function (acc, phase) {
+          return acc + phase.seconds;
+        }, 0);
+        var remainingRounds = Math.max(
+          0,
+          (cachedValues ? cachedValues.rounds : 0) - currentRound + 1,
+        );
+        totalDeadline = now + remainingRounds * perRoundSec * 1000;
+        paused = false;
+        pauseBtn.textContent = "Пауза";
+        startTimerLoop();
+      } catch (_) {
+        window.alert("Не удалось продолжить тренировку.");
+      }
     }
+
+    statusRequestInProgress = false;
+    pauseBtn.disabled = !running;
+    resetBtn.disabled = !running;
   }
 
-  function handleReset() {
-    cachedValues = null;
-    phases = [];
-    currentPhaseIndex = 0;
-    currentRound = 0;
-    resetUI();
-    validateInputs();
+  async function handleReset() {
+    if (
+      (!running && trainingId === null) ||
+      statusRequestInProgress ||
+      completionInProgress
+    ) {
+      return;
+    }
+
+    statusRequestInProgress = true;
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+
+    try {
+      if (trainingId !== null) {
+        await updateTrainingStatus("cancel");
+      }
+
+      trainingId = null;
+      cachedValues = null;
+      phases = [];
+      currentPhaseIndex = 0;
+      currentRound = 0;
+      resetUI();
+      validateInputs();
+    } catch (_) {
+      window.alert("Не удалось отменить тренировку.");
+      pauseBtn.disabled = false;
+      resetBtn.disabled = false;
+    } finally {
+      statusRequestInProgress = false;
+    }
   }
 
   // Wire events

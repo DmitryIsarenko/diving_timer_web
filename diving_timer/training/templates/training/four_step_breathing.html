@@ -7,6 +7,7 @@
         id="exercise-form"
         class="exercise-form"
         data-start-url="{% url 'start_four_step_breathing_exercise' %}"
+        data-status-url-template="{% url 'update_training_status' training_id=0 %}"
         data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
       >
         {% csrf_token %}
