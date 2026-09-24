@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load training_extras %}
 
 {% block content %}
   <section class="container statistics-page">
@@ -28,7 +29,7 @@
 
       <article class="card">
         <div class="card-title">Плановая длительность</div>
-        <div class="card-value">{{ planned_duration }}</div>
+        <div class="card-value">{{ planned_duration|format_duration }}</div>
       </article>
 
       <article class="card">

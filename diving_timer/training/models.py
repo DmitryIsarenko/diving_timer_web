@@ -1,5 +1,17 @@
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
+
+from .constants import (
+    DEFAULT_EXHALE_DURATION_SECONDS,
+    DEFAULT_EXHALE_HOLD_DURATION_SECONDS,
+    DEFAULT_INHALE_DURATION_SECONDS,
+    DEFAULT_INHALE_HOLD_DURATION_SECONDS,
+    DEFAULT_ROUND_COUNT,
+    MIN_OPTIONAL_HOLD_DURATION_SECONDS,
+    MIN_PHASE_DURATION_SECONDS,
+    MIN_ROUND_COUNT,
+)
 
 
 class Training(models.Model):
@@ -79,17 +91,32 @@ class FourStepBreathingExercise(Exercise):
     """Store configuration for a four-step breathing exercise."""
 
     inhale_duration_seconds: models.IntegerField = models.IntegerField(
-        verbose_name='inhale_duration_seconds', blank=False, default=5
+        verbose_name='inhale_duration_seconds',
+        blank=False,
+        default=DEFAULT_INHALE_DURATION_SECONDS,
+        validators=[MinValueValidator(MIN_PHASE_DURATION_SECONDS)],
     )
     inhale_hold_duration_seconds: models.IntegerField = models.IntegerField(
-        verbose_name='inhale_hold_duration_seconds', blank=False, default=10
+        verbose_name='inhale_hold_duration_seconds',
+        blank=False,
+        default=DEFAULT_INHALE_HOLD_DURATION_SECONDS,
+        validators=[MinValueValidator(MIN_PHASE_DURATION_SECONDS)],
     )
     exhale_duration_seconds: models.IntegerField = models.IntegerField(
-        verbose_name='exhale_duration_seconds', blank=False, default=5
+        verbose_name='exhale_duration_seconds',
+        blank=False,
+        default=DEFAULT_EXHALE_DURATION_SECONDS,
+        validators=[MinValueValidator(MIN_PHASE_DURATION_SECONDS)],
     )
     exhale_hold_duration_seconds: models.IntegerField = models.IntegerField(
-        verbose_name='exhale_hold_duration_seconds', blank=False, default=0
+        verbose_name='exhale_hold_duration_seconds',
+        blank=False,
+        default=DEFAULT_EXHALE_HOLD_DURATION_SECONDS,
+        validators=[MinValueValidator(MIN_OPTIONAL_HOLD_DURATION_SECONDS)],
     )
     round_count: models.IntegerField = models.IntegerField(
-        verbose_name='round_count', blank=False, default=1
+        verbose_name='round_count',
+        blank=False,
+        default=DEFAULT_ROUND_COUNT,
+        validators=[MinValueValidator(MIN_ROUND_COUNT)],
     )

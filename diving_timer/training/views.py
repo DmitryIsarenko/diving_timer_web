@@ -8,6 +8,16 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from .constants import (
+    DEFAULT_EXHALE_DURATION_SECONDS,
+    DEFAULT_EXHALE_HOLD_DURATION_SECONDS,
+    DEFAULT_INHALE_DURATION_SECONDS,
+    DEFAULT_INHALE_HOLD_DURATION_SECONDS,
+    DEFAULT_ROUND_COUNT,
+    MIN_OPTIONAL_HOLD_DURATION_SECONDS,
+    MIN_PHASE_DURATION_SECONDS,
+    MIN_ROUND_COUNT,
+)
 from .forms import FourStepBreathingExerciseStartForm, TrainingStatusActionForm
 from .models import Exercise, FourStepBreathingExercise, Training
 
@@ -24,7 +34,23 @@ def trainings(request: HttpRequest) -> HttpResponse:
 
 def four_step_breathing_exercise(request: HttpRequest) -> HttpResponse:
     """View for a four-step-exercise."""
-    return render(request, 'training/four_step_breathing.html')
+    context = {
+        'four_step_defaults': {
+            'inhale_duration_seconds': DEFAULT_INHALE_DURATION_SECONDS,
+            'inhale_hold_duration_seconds': DEFAULT_INHALE_HOLD_DURATION_SECONDS,
+            'exhale_duration_seconds': DEFAULT_EXHALE_DURATION_SECONDS,
+            'exhale_hold_duration_seconds': DEFAULT_EXHALE_HOLD_DURATION_SECONDS,
+            'round_count': DEFAULT_ROUND_COUNT,
+        },
+        'four_step_minimums': {
+            'phase_duration_seconds': MIN_PHASE_DURATION_SECONDS,
+            'optional_hold_duration_seconds': (
+                MIN_OPTIONAL_HOLD_DURATION_SECONDS
+            ),
+            'round_count': MIN_ROUND_COUNT,
+        },
+    }
+    return render(request, 'training/four_step_breathing.html', context)
 
 
 @login_required
