@@ -5,42 +5,42 @@
   <section class="container statistics-page">
     <div class="statistics-page__header">
       <a class="back-link" href="{% url 'exercise_statistics' %}">
-        ← Ко всей статистике
+        ← Back to all statistics
       </a>
 
       <h2>{{ exercise_name }}</h2>
-      <p>История всех запусков этого упражнения.</p>
+      <p>History of all sessions for this exercise.</p>
     </div>
 
     <div class="grid-3 indicators">
       <article class="card">
-        <div class="card-title">Всего запусков</div>
+        <div class="card-title">Total sessions</div>
         <div class="card-value">{{ total_trainings }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">Завершено</div>
+        <div class="card-title">Completed</div>
         <div class="card-value">{{ completed_trainings }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">Отменено</div>
+        <div class="card-title">Cancelled</div>
         <div class="card-value">{{ cancelled_trainings }}</div>
       </article>
     </div>
 
     <section class="statistics-section">
-      <h3>История тренировок</h3>
+      <h3>Training history</h3>
 
       {% if trainings %}
         <div class="statistics-table-wrapper">
           <table class="statistics-table">
             <thead>
               <tr>
-                <th scope="col">Дата запуска</th>
-                <th scope="col">Статус</th>
+                <th scope="col">Session date</th>
+                <th scope="col">Status</th>
                 <th scope="col">
-                  <span class="visually-hidden">Действие</span>
+                  <span class="visually-hidden">Actions</span>
                 </th>
               </tr>
             </thead>
@@ -50,7 +50,7 @@
                 <tr>
                   <td>
                     <time datetime="{{ training.created_at|date:'c' }}">
-                      {{ training.created_at|date:'d.m.Y H:i' }}
+                      {{ training.created_at|date:'Y-m-d H:i' }}
                     </time>
                   </td>
                   <td>
@@ -67,17 +67,17 @@
                       class="nav-btn nav-btn--secondary"
                       href="{% url 'exercise_statistics_by_training' training_id=training.id %}"
                     >
-                      Подробнее
+                      Details
                     </a>
                     {% if training.status == 'completed' or training.status == 'cancelled' %}
-                      <form method="post" action="{% url 'delete_training' training_id=training.id %}" data-training-action data-confirm-message="Удалить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Она исчезнет из истории и статистики. Восстановить её нельзя.">
+                      <form method="post" action="{% url 'delete_training' training_id=training.id %}" data-training-action data-confirm-message="Delete the session from {{ training.created_at|date:'Y-m-d H:i' }}? It will be removed from your history and statistics. This cannot be undone.">
                         {% csrf_token %}
-                        <button type="submit" class="nav-btn nav-btn--danger" aria-label="Удалить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}">Удалить</button>
+                        <button type="submit" class="nav-btn nav-btn--danger" aria-label="Delete the session from {{ training.created_at|date:'Y-m-d H:i' }}">Delete</button>
                       </form>
                     {% elif training.status == 'not_started' or training.status == 'in_progress' or training.status == 'paused' %}
-                      <form method="post" action="{% url 'cancel_training_from_trainings_by_exercise' exercise_type=exercise_type training_id=training.id %}" data-training-action data-confirm-message="Отменить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Продолжить её будет нельзя, но запись останется в истории.">
+                      <form method="post" action="{% url 'cancel_training_from_trainings_by_exercise' exercise_type=exercise_type training_id=training.id %}" data-training-action data-confirm-message="Cancel the session from {{ training.created_at|date:'Y-m-d H:i' }}? You will not be able to resume it, but it will remain in your history.">
                         {% csrf_token %}
-                        <button type="submit" class="nav-btn nav-btn--secondary" aria-label="Отменить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}">Отменить</button>
+                        <button type="submit" class="nav-btn nav-btn--secondary" aria-label="Cancel the session from {{ training.created_at|date:'Y-m-d H:i' }}">Cancel</button>
                       </form>
                     {% endif %}
                     </div>
@@ -89,16 +89,16 @@
         </div>
       {% else %}
         <article class="card">
-          <h3 class="card-title">Тренировок пока нет</h3>
+          <h3 class="card-title">No sessions yet</h3>
           <p>
-            Здесь появятся все запуски упражнения
-            «{{ exercise_name }}».
+            All sessions for
+            “{{ exercise_name }}” will appear here.
           </p>
         </article>
       {% endif %}
     </section>
-    <p class="training-action-note">Отмена сохраняет запись в истории. Удаление необратимо и исключает тренировку из статистики.</p>
-    <noscript><p>JavaScript отключён: кнопки выполняют действие без дополнительного подтверждения.</p></noscript>
+    <p class="training-action-note">Cancelling keeps the session in your history. Deleting is permanent and removes the session from your statistics.</p>
+    <noscript><p>JavaScript is disabled: actions take effect without an additional confirmation.</p></noscript>
   </section>
   <script src="{% static 'js/training_actions.js' %}" defer></script>
 {% endblock %}

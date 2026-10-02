@@ -53,10 +53,10 @@
         ? window.speechSynthesis.getVoices()
         : [];
       if (!voices || voices.length === 0) return;
-      var ru = voices.find(function (v) {
-        return (v.lang || "").toLowerCase().startsWith("ru");
+      var englishVoice = voices.find(function (v) {
+        return (v.lang || "").toLowerCase().startsWith("en");
       });
-      voice = ru || voices[0];
+      voice = englishVoice || null;
     } catch (_) {
       /* noop */
     }
@@ -72,7 +72,7 @@
       if (!window.speechSynthesis) return;
       var utter = new SpeechSynthesisUtterance(text);
       if (voice) utter.voice = voice;
-      utter.lang = voice && voice.lang ? voice.lang : "ru-RU";
+      utter.lang = voice && voice.lang ? voice.lang : "en-US";
       window.speechSynthesis.cancel(); // ensure no overlap
       window.speechSynthesis.speak(utter);
     } catch (_) {
@@ -146,14 +146,14 @@
 
   function buildPhases(values) {
     var p = [
-      { key: "inhale", name: "Вдох", seconds: values.inhale },
-      { key: "holdIn", name: "Задержка на вдохе", seconds: values.holdIn },
-      { key: "exhale", name: "Выдох", seconds: values.exhale },
+      { key: "inhale", name: "Inhale", seconds: values.inhale },
+      { key: "holdIn", name: "Hold after inhale", seconds: values.holdIn },
+      { key: "exhale", name: "Exhale", seconds: values.exhale },
     ];
     if (values.holdOutOptional) {
       p.push({
         key: "holdOut",
-        name: "Задержка на выдохе",
+        name: "Hold after exhale",
         seconds: values.holdOut,
       });
     }
@@ -180,7 +180,7 @@
     paused = false;
     startBtn.disabled = !validateInputs();
     pauseBtn.disabled = true;
-    pauseBtn.textContent = "Пауза";
+    pauseBtn.textContent = "Pause";
     resetBtn.disabled = true;
     inhaleInput.disabled = false;
     holdInInput.disabled = false;
@@ -293,7 +293,7 @@
       pauseBtn.disabled = true;
       resetBtn.disabled = false;
       window.alert(
-        "Не удалось сохранить завершение тренировки. Обновите страницу и проверьте статистику.",
+        "Could not save the completed session. Reload the page and check your statistics.",
       );
     } finally {
       completionInProgress = false;
@@ -340,7 +340,7 @@
     });
 
     if (!response.ok) {
-      throw new Error("Не удалось сохранить тренировку.");
+      throw new Error("Could not save the session.");
     }
 
     return response.json();
@@ -405,7 +405,7 @@
     });
 
     if (!response.ok) {
-      throw new Error("Не удалось обновить статус тренировки.");
+      throw new Error("Could not update the session status.");
     }
 
     return response.json();
@@ -437,7 +437,7 @@
     } catch (_) {
       if (pageLeaving) return;
       startBtn.disabled = false;
-      window.alert("Не удалось сохранить тренировку. Попробуйте ещё раз.");
+      window.alert("Could not save the session. Please try again.");
     }
   }
 
@@ -462,10 +462,10 @@
         if (pageLeaving) return;
         stopTimerLoop();
         paused = true;
-        pauseBtn.textContent = "Продолжить";
+        pauseBtn.textContent = "Resume";
       } catch (_) {
         if (pageLeaving) return;
-        window.alert("Не удалось поставить тренировку на паузу.");
+        window.alert("Could not pause the session.");
       }
     } else {
       try {
@@ -486,11 +486,11 @@
         );
         totalDeadline = now + remainingRounds * perRoundSec * 1000;
         paused = false;
-        pauseBtn.textContent = "Пауза";
+        pauseBtn.textContent = "Pause";
         startTimerLoop();
       } catch (_) {
         if (pageLeaving) return;
-        window.alert("Не удалось продолжить тренировку.");
+        window.alert("Could not resume the session.");
       }
     }
 
@@ -529,7 +529,7 @@
       validateInputs();
     } catch (_) {
       if (pageLeaving) return;
-      window.alert("Не удалось отменить тренировку.");
+      window.alert("Could not cancel the session.");
       pauseBtn.disabled = false;
       resetBtn.disabled = false;
     } finally {

@@ -156,6 +156,10 @@ def statistics_trainings_by_exercise(
     exercise_type: str,
 ) -> HttpResponse:
     """View to show trainings of a certain exercise type."""
+    try:
+        exercise_name = Exercise.ExerciseType(exercise_type).label
+    except ValueError as exc:
+        raise Http404('Unknown exercise type.') from exc
     user = request.user
     trainings = Training.objects.filter(
         user=user,
@@ -164,7 +168,7 @@ def statistics_trainings_by_exercise(
 
     context = {
         'exercise_type': exercise_type,
-        'exercise_name': 'Циклическая четырёхфазная тренировка',
+        'exercise_name': exercise_name,
         'total_trainings': trainings.count(),
         'completed_trainings': trainings.filter(
             status='completed',

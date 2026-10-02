@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,21 +16,21 @@
           <nav class="nav">
             <a class="nav-btn {% if request and request.path == '/' %}active{% endif %}"
               href="{% url 'index' %}">
-              Главная
+              Home
             </a>
             <div class="training-menu">
               <a
                 class="nav-btn {% if request and request.path|slice:':11' == '/trainings/' %}active{% endif %}"
                 href="{% url 'trainings' %}"
               >
-                Тренировки
+                Training
               </a>
 
               <button
                 id="training-menu-toggle"
                 class="training-menu-toggle"
                 type="button"
-                aria-label="Открыть меню тренировок"
+                aria-label="Toggle training menu"
                 aria-expanded="false"
                 aria-controls="training-menu-list"
               >
@@ -38,15 +38,15 @@
               </button>
 
               <div id="training-menu-list" class="training-menu-list">
-                <a href="{% url 'trainings' %}">Все тренировки</a>
+                <a href="{% url 'trainings' %}">All exercises</a>
                 <a href="{% url 'four_step_breathing' %}">
-                  Циклическая четырёхфазная тренировка
+                  Four-step breathing
                 </a>
               </div>
             </div>
             <a class="nav-btn {% if request and request.path == '/exercise-statistics/' %}active{% endif %}"
               href="{% url 'exercise_statistics' %}">
-              Статистика
+              Statistics
             </a>
           </nav>
 
@@ -56,11 +56,11 @@
 
               <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="nav-btn">Выйти</button>
+                <button type="submit" class="nav-btn">Log out</button>
               </form>
             {% else %}
-              <a class="nav-btn" href="{% url 'login' %}">Войти</a>
-              <a class="nav-btn" href="{% url 'register' %}">Регистрация</a>
+              <a class="nav-btn" href="{% url 'login' %}">Log in</a>
+              <a class="nav-btn" href="{% url 'register' %}">Sign up</a>
             {% endif %}
           </div>
         </div>
@@ -84,7 +84,7 @@
       <div class="container">
         <span>© 2026 Diving Timer</span>
         <nav class="footer-nav">
-          {% comment %} <a href="/privacy/">Политика</a> {% endcomment %}
+          {% comment %} <a href="/privacy/">Privacy policy</a> {% endcomment %}
           <a href="https://github.com/DmitryIsarenko" target="_blank" rel="noopener">GitHub</a>
         </nav>
       </div>

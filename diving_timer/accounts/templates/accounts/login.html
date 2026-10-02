@@ -3,7 +3,7 @@
 {% block content %}
   <section class="container">
     <div class="card">
-      <h2>Вход</h2>
+      <h2>Log in</h2>
 
       {% if form.non_field_errors %}
         <div role="alert">
@@ -17,14 +17,14 @@
         {{ form.as_p }}
 
         <button type="submit" class="nav-btn">
-          Войти
+          Log in
         </button>
       </form>
 
       <p>
-        Нет аккаунта?
+        Don't have an account?
         <a href="{% url 'register' %}">
-          Зарегистрироваться
+          Sign up
         </a>
       </p>
     </div>

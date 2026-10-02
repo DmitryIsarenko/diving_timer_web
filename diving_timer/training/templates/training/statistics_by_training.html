@@ -8,16 +8,16 @@
         class="back-link"
         href="{% url 'exercise_statistics_by_exercise' exercise_type=exercise_type %}"
       >
-        ← К истории упражнения
+        ← Back to exercise history
       </a>
 
-      <h2>Тренировка от {{ training.created_at|date:'d.m.Y H:i' }}</h2>
+      <h2>Session from {{ training.created_at|date:'Y-m-d H:i' }}</h2>
       <p>{{ exercise_name }}</p>
     </div>
 
     <div class="grid-3 indicators">
       <article class="card">
-        <div class="card-title">Статус</div>
+        <div class="card-title">Status</div>
         <div class="card-value">
           <span
             class="training-status training-status--{{ training.status }}"
@@ -28,35 +28,35 @@
       </article>
 
       <article class="card">
-        <div class="card-title">Плановая длительность</div>
+        <div class="card-title">Planned duration</div>
         <div class="card-value">{{ planned_duration|format_duration }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">Тип упражнения</div>
+        <div class="card-title">Exercise type</div>
         <div class="card-value card-value--text">{{ exercise_name }}</div>
       </article>
     </div>
 
     <section class="statistics-section">
-      <h3>Время сессии</h3>
+      <h3>Session timestamps</h3>
 
       <dl class="statistics-list statistics-list--details">
         <div>
-          <dt>Создана</dt>
+          <dt>Created</dt>
           <dd>
             <time datetime="{{ training.created_at|date:'c' }}">
-              {{ training.created_at|date:'d.m.Y H:i:s' }}
+              {{ training.created_at|date:'Y-m-d H:i:s' }}
             </time>
           </dd>
         </div>
 
         {% if training.first_paused_at %}
           <div>
-            <dt>Впервые поставлена на паузу</dt>
+            <dt>First paused</dt>
             <dd>
               <time datetime="{{ training.first_paused_at|date:'c' }}">
-                {{ training.first_paused_at|date:'d.m.Y H:i:s' }}
+                {{ training.first_paused_at|date:'Y-m-d H:i:s' }}
               </time>
             </dd>
           </div>
@@ -64,10 +64,10 @@
 
         {% if training.completed_at %}
           <div>
-            <dt>Завершена</dt>
+            <dt>Completed</dt>
             <dd>
               <time datetime="{{ training.completed_at|date:'c' }}">
-                {{ training.completed_at|date:'d.m.Y H:i:s' }}
+                {{ training.completed_at|date:'Y-m-d H:i:s' }}
               </time>
             </dd>
           </div>
@@ -75,10 +75,10 @@
 
         {% if training.cancelled_at %}
           <div>
-            <dt>Отменена</dt>
+            <dt>Cancelled</dt>
             <dd>
               <time datetime="{{ training.cancelled_at|date:'c' }}">
-                {{ training.cancelled_at|date:'d.m.Y H:i:s' }}
+                {{ training.cancelled_at|date:'Y-m-d H:i:s' }}
               </time>
             </dd>
           </div>
@@ -87,28 +87,28 @@
     </section>
 
     <section class="statistics-section">
-      <h3>Параметры и результат упражнения</h3>
+      <h3>Exercise settings</h3>
 
       {% include detail_template %}
     </section>
     <section class="statistics-section">
-      <h3>Действия с тренировкой</h3>
+      <h3>Session actions</h3>
       <div class="training-actions">
         {% if training.status == 'completed' or training.status == 'cancelled' %}
-          <form method="post" action="{% url 'delete_training' training_id=training.id %}" data-training-action data-confirm-message="Удалить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Она исчезнет из истории и статистики. Восстановить её нельзя.">
+          <form method="post" action="{% url 'delete_training' training_id=training.id %}" data-training-action data-confirm-message="Delete the session from {{ training.created_at|date:'Y-m-d H:i' }}? It will be removed from your history and statistics. This cannot be undone.">
             {% csrf_token %}
-            <button type="submit" class="nav-btn nav-btn--danger">Удалить тренировку</button>
+            <button type="submit" class="nav-btn nav-btn--danger">Delete session</button>
           </form>
-          <p class="training-action-note">Удаление необратимо: запись исчезнет из истории и статистики.</p>
+          <p class="training-action-note">Deleting is permanent: the session will be removed from your history and statistics.</p>
         {% elif training.status == 'not_started' or training.status == 'in_progress' or training.status == 'paused' %}
-          <form method="post" action="{% url 'cancel_training_from_training_details' training_id=training.id %}" data-training-action data-confirm-message="Отменить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Продолжить её будет нельзя, но запись останется в истории.">
+          <form method="post" action="{% url 'cancel_training_from_training_details' training_id=training.id %}" data-training-action data-confirm-message="Cancel the session from {{ training.created_at|date:'Y-m-d H:i' }}? You will not be able to resume it, but it will remain in your history.">
             {% csrf_token %}
-            <button type="submit" class="nav-btn nav-btn--secondary">Отменить тренировку</button>
+            <button type="submit" class="nav-btn nav-btn--secondary">Cancel session</button>
           </form>
-          <p class="training-action-note">После отмены запись останется в истории, и её можно будет удалить. Продолжение тренировки недоступно.</p>
+          <p class="training-action-note">After cancellation, the session remains in your history and can be deleted. It cannot be resumed.</p>
         {% endif %}
       </div>
-      <noscript><p>JavaScript отключён: кнопки выполняют действие без дополнительного подтверждения.</p></noscript>
+      <noscript><p>JavaScript is disabled: actions take effect without an additional confirmation.</p></noscript>
     </section>
   </section>
   <script src="{% static 'js/training_actions.js' %}" defer></script>

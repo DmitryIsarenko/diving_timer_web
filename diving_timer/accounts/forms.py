@@ -11,10 +11,10 @@ class RegistrationForm(forms.ModelForm):
     """Form for creating a user account."""
 
     email = forms.CharField(
-        label='e-mail',
+        label='Email',
         widget=forms.EmailInput,
         required=True,
-        help_text='Enter valid e-mail.',
+        help_text='Enter a valid email address.',
     )
 
     password1 = forms.CharField(
@@ -24,7 +24,7 @@ class RegistrationForm(forms.ModelForm):
         required=True,
     )
     password2 = forms.CharField(
-        label='Repeat password',
+        label='Confirm password',
         widget=forms.PasswordInput,
         required=True,
     )
@@ -51,7 +51,7 @@ class RegistrationForm(forms.ModelForm):
         password2 = cleaned_data.get('password2')
 
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError('Passwords does not match!')
+            raise forms.ValidationError('Passwords do not match.')
         return cleaned_data
 
     def save(self, commit: bool = True) -> UserModel:

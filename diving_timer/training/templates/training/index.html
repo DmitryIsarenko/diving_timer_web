@@ -2,42 +2,42 @@
 {% block content %}
 <div class="container">
     <section class="home-stack">
-        <h2 class="home-title">Тренажер задержки дыхания</h2>
-        <p class="home-subtitle">Систематическая тренировка дыхательной системы по контролируемой методике</p>
+        <h2 class="home-title">Breath-hold training timer</h2>
+        <p class="home-subtitle">Structured breathing practice with customizable intervals</p>
 
         <div class="home-features grid-3">
             <div class="card home-card">
-                <h3 class="card-title">4-этапный цикл</h3>
-                <p>Вдох → Задержка → Выдох → Задержка. Полный контроль длительности каждого этапа</p>
+                <h3 class="card-title">Four-step cycle</h3>
+                <p>Inhale → Hold → Exhale → Hold. Set the duration of each phase</p>
             </div>
 
             <div class="card home-card">
-                <h3 class="card-title">Голосовое сопровождение</h3>
-                <p>Аудио-подсказки для точного соблюдения временных интервалов</p>
+                <h3 class="card-title">Voice guidance</h3>
+                <p>Spoken prompts help you follow each timed phase</p>
             </div>
 
             <div class="card home-card">
-                <h3 class="card-title">Статистика прогресса</h3>
-                <p>Отслеживание результатов и динамики тренировок</p>
+                <h3 class="card-title">Training statistics</h3>
+                <p>Review your sessions and track your training over time</p>
             </div>
         </div>
 
         <div class="home-controls controls">
             {% comment %} {% if user.is_authenticated %} {% endcomment %}
             <a href="{% url 'trainings' %}" class="nav-btn">
-                Выбрать тренировку
+                Choose an exercise
             </a>
 
-            <a href="{% url 'exercise_statistics' %}" class="nav-btn nav-btn--secondary">Моя статистика</a>
+            <a href="{% url 'exercise_statistics' %}" class="nav-btn nav-btn--secondary">My statistics</a>
             {% comment %} {% else %} {% endcomment %}
-                {% comment %} <a href="{% url 'login' %}" class="nav-btn">Войти для начала тренировки</a> {% endcomment %}
+                {% comment %} <a href="{% url 'login' %}" class="nav-btn">Log in to start training</a> {% endcomment %}
             {% comment %} {% endif %} {% endcomment %}
         </div>
 
         <div class="card home-methodology">
-            <h3 class="card-title">Методика тренировки</h3>
-            <p>Программа рассчитывает общее время тренировки на основе установленных параметров:<br>
-            <strong>(Вдох + Задержка вдоха + Выдох + Задержка выдоха) × Количество кругов</strong></p>
+            <h3 class="card-title">How the timer works</h3>
+            <p>The total training time is calculated from your settings:<br>
+            <strong>(Inhale + Hold after inhale + Exhale + Hold after exhale) × Number of rounds</strong></p>
         </div>
     </section>
 </div>

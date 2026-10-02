@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
 <section class="container">
-  <h2>Циклическая четырёхфазная тренировка</h2>
+  <h2>Four-step breathing</h2>
   <div class="stack">
     <form
       id="exercise-form"
@@ -13,7 +13,7 @@
 
       <div class="grid-2">
         <div class="field">
-          <label for="inhaleSec">Вдох (сек)</label>
+          <label for="inhaleSec">Inhale (seconds)</label>
           <input
             id="inhaleSec"
             name="inhale_duration_seconds"
@@ -25,7 +25,7 @@
           />
         </div>
         <div class="field">
-          <label for="holdInSec">Задержка на вдохе (сек)</label>
+          <label for="holdInSec">Hold after inhale (seconds)</label>
           <input
             id="holdInSec"
             name="inhale_hold_duration_seconds"
@@ -37,7 +37,7 @@
           />
         </div>
         <div class="field">
-          <label for="exhaleSec">Выдох (сек)</label>
+          <label for="exhaleSec">Exhale (seconds)</label>
           <input
             id="exhaleSec"
             name="exhale_duration_seconds"
@@ -49,7 +49,7 @@
           />
         </div>
         <div class="field">
-          <label for="holdOutSec">Задержка на выдохе (сек, опционально)</label>
+          <label for="holdOutSec">Hold after exhale (seconds, optional)</label>
           <input
             id="holdOutSec"
             name="exhale_hold_duration_seconds"
@@ -60,7 +60,7 @@
           />
         </div>
         <div class="field">
-          <label for="rounds">Круги</label>
+          <label for="rounds">Rounds</label>
           <input
             id="rounds"
             name="round_count"
@@ -75,13 +75,13 @@
 
       <div class="controls">
         <button type="button" id="startBtn" class="nav-btn" disabled>
-          Старт
+          Start
         </button>
         <button type="button" id="pauseBtn" class="nav-btn" disabled>
-          Пауза
+          Pause
         </button>
         <button type="button" id="resetBtn" class="nav-btn" disabled>
-          Сброс
+          Reset
         </button>
         <a
           id="toStats"
@@ -89,29 +89,29 @@
           href="{% url 'exercise_statistics' %}"
           aria-disabled="true"
           tabindex="-1"
-          >Перейти к статистике</a
+          >View statistics</a
         >
       </div>
 
       <div class="grid-3 indicators">
         <div class="card">
-          <div class="card-title">Текущий этап</div>
+          <div class="card-title">Current phase</div>
           <div id="currentPhase" class="card-value">—</div>
         </div>
         <div class="card">
-          <div class="card-title">До конца этапа</div>
+          <div class="card-title">Phase time remaining</div>
           <div id="phaseRemaining" class="card-value">00:00</div>
         </div>
         <div class="card">
-          <div class="card-title">До конца всего</div>
+          <div class="card-title">Total time remaining</div>
           <div id="totalRemaining" class="card-value">00:00:00</div>
         </div>
       </div>
 
-      <div class="rounds-info">Круг: <span id="roundInfo">0 / 0</span></div>
+      <div class="rounds-info">Round: <span id="roundInfo">0 / 0</span></div>
 
       <div class="total-time-info">
-        Общее время тренировки: <span id="totalPlanned">00:00:00</span>
+        Total training time: <span id="totalPlanned">00:00:00</span>
       </div>
     </form>
   </div>

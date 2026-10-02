@@ -3,44 +3,44 @@
 {% block content %}
   <section class="container statistics-page">
     <div class="statistics-page__header">
-      <h2>Моя статистика</h2>
+      <h2>My statistics</h2>
       <p>
-        Общая информация о сохранённых тренировках и история по каждому
-        виду упражнения.
+        An overview of your saved training sessions and the history of each
+        exercise type.
       </p>
     </div>
 
     <div class="grid-3 indicators">
       <article class="card">
-        <div class="card-title">Всего тренировок</div>
+        <div class="card-title">Total sessions</div>
         <div class="card-value">{{ total_trainings }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">За последние 30 дней</div>
+        <div class="card-title">Last 30 days</div>
         <div class="card-value">{{ trainings_last_30_days }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">Завершено</div>
+        <div class="card-title">Completed</div>
         <div class="card-value">{{ completed_trainings }}</div>
       </article>
     </div>
 
     <div class="grid-2 indicators">
       <article class="card">
-        <div class="card-title">Отменено</div>
+        <div class="card-title">Cancelled</div>
         <div class="card-value">{{ cancelled_trainings }}</div>
       </article>
 
       <article class="card">
-        <div class="card-title">В процессе</div>
+        <div class="card-title">Active</div>
         <div class="card-value">{{ active_trainings }}</div>
       </article>
     </div>
 
     <section class="statistics-section">
-      <h3>Статистика по упражнениям</h3>
+      <h3>Statistics by exercise</h3>
 
       {% if training_statistics_by_type %}
         <div class="trainings-grid">
@@ -50,15 +50,15 @@
 
               <dl class="statistics-list">
                 <div>
-                  <dt>Всего запусков</dt>
+                  <dt>Total sessions</dt>
                   <dd>{{ training_statistic.total_trainings }}</dd>
                 </div>
                 <div>
-                  <dt>Завершено</dt>
+                  <dt>Completed</dt>
                   <dd>{{ training_statistic.completed_trainings }}</dd>
                 </div>
                 <div>
-                  <dt>Отменено</dt>
+                  <dt>Cancelled</dt>
                   <dd>{{ training_statistic.cancelled_trainings }}</dd>
                 </div>
               </dl>
@@ -67,20 +67,20 @@
                 class="nav-btn"
                 href="{% url 'exercise_statistics_by_exercise' exercise_type=training_statistic.exercise_type %}"
               >
-                Открыть историю
+                View history
               </a>
             </article>
           {% endfor %}
         </div>
       {% else %}
         <article class="card">
-          <h3 class="card-title">Пока нет сохранённых тренировок</h3>
+          <h3 class="card-title">No saved sessions yet</h3>
           <p>
-            Запустите тренировку в авторизованном аккаунте, чтобы она появилась
-            в статистике.
+            Start a session while logged in to save it
+            to your statistics.
           </p>
           <a class="nav-btn" href="{% url 'trainings' %}">
-            Выбрать тренировку
+            Choose an exercise
           </a>
         </article>
       {% endif %}

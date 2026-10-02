@@ -76,10 +76,10 @@ class Exercise(models.Model):
 
         FOUR_STEP_BREATHING = (
             'four_step_breathing',
-            'Циклическая четырёхфазная тренировка',
+            'Four-step breathing',
         )
-        CO2_TABLE = 'co2_table', 'CO₂-таблица'
-        O2_TABLE = 'o2_table', 'O₂-таблица'
+        CO2_TABLE = 'co2_table', 'CO₂ table'
+        O2_TABLE = 'o2_table', 'O₂ table'
 
     exercise_type: models.CharField = models.CharField(
         max_length=100,
