@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load training_extras %}
+{% load training_extras static %}
 
 {% block content %}
   <section class="container statistics-page">
@@ -91,5 +91,25 @@
 
       {% include detail_template %}
     </section>
+    <section class="statistics-section">
+      <h3>Действия с тренировкой</h3>
+      <div class="training-actions">
+        {% if training.status == 'completed' or training.status == 'cancelled' %}
+          <form method="post" action="{% url 'delete_training' training_id=training.id %}" data-training-action data-confirm-message="Удалить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Она исчезнет из истории и статистики. Восстановить её нельзя.">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn nav-btn--danger">Удалить тренировку</button>
+          </form>
+          <p class="training-action-note">Удаление необратимо: запись исчезнет из истории и статистики.</p>
+        {% elif training.status == 'not_started' or training.status == 'in_progress' or training.status == 'paused' %}
+          <form method="post" action="{% url 'cancel_training_from_training_details' training_id=training.id %}" data-training-action data-confirm-message="Отменить тренировку от {{ training.created_at|date:'d.m.Y H:i' }}? Продолжить её будет нельзя, но запись останется в истории.">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn nav-btn--secondary">Отменить тренировку</button>
+          </form>
+          <p class="training-action-note">После отмены запись останется в истории, и её можно будет удалить. Продолжение тренировки недоступно.</p>
+        {% endif %}
+      </div>
+      <noscript><p>JavaScript отключён: кнопки выполняют действие без дополнительного подтверждения.</p></noscript>
+    </section>
   </section>
+  <script src="{% static 'js/training_actions.js' %}" defer></script>
 {% endblock %}

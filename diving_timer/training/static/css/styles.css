@@ -299,3 +299,32 @@ header nav { margin-top: 0; }
   margin-bottom: 20px;
   padding-left: 20px;
 }
+
+/* Statistics session actions */
+.training-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.training-actions form { margin: 0; }
+.statistics-table-wrapper { overflow-x: auto; }
+.statistics-table .training-actions {
+  flex-wrap: nowrap;
+}
+.statistics-table .training-actions > * { flex: 0 0 auto; }
+.statistics-table .training-actions .nav-btn { white-space: nowrap; }
+.training-actions button { font: inherit; cursor: pointer; }
+.training-action-note { color: #475569; }
+
+.nav-btn--danger {
+  background: #b91c1c;
+  border-color: #991b1b;
+}
+
+.nav-btn--danger:hover { background: #991b1b; }
+.training-actions .nav-btn:focus-visible {
+  outline: 3px solid #0a2540;
+  outline-offset: 3px;
+}

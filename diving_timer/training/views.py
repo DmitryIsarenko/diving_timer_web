@@ -3,8 +3,13 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Count, Q
-from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    JsonResponse,
+)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -287,4 +292,108 @@ def update_training_status(
             'training_id': training.pk,
             'status': training.status,
         }
+    )
+
+
+@login_required
+@require_POST
+def delete_training(
+    request: HttpRequest,
+    training_id: int,
+) -> HttpResponse:
+    """View func for deleting a training."""
+    with transaction.atomic():
+        training = get_object_or_404(
+            Training.objects.select_for_update(),
+            user=request.user,
+            pk=training_id,
+        )
+
+        if training.status not in (
+            Training.Status.CANCELLED,
+            Training.Status.COMPLETED,
+        ):
+            return HttpResponse(
+                'Only Completed or Cancelled training session can be deleted.',
+                status=409,
+                content_type='text/plain; charset=utf-8',
+            )
+
+        exercise_type = training.exercise.exercise_type
+
+        training.delete()
+    return redirect(
+        'exercise_statistics_by_exercise',
+        exercise_type=exercise_type,
+    )
+
+
+@login_required
+@require_POST
+def cancel_training_from_training_details(
+    request: HttpRequest,
+    training_id: int,
+) -> HttpResponse:
+    """Func to cancel training."""
+    with transaction.atomic():
+        training = get_object_or_404(
+            Training.objects.select_for_update(),
+            user=request.user,
+            pk=training_id,
+        )
+
+        if training.status not in (
+            Training.Status.NOT_STARTED,
+            Training.Status.IN_PROGRESS,
+            Training.Status.PAUSED,
+        ):
+            return HttpResponse(
+                'Only not started or in progress or paused '
+                'training can be cancelled.',
+                status=409,
+                content_type='text/plain; charset=utf-8',
+            )
+
+        training.status = Training.Status.CANCELLED
+        training.cancelled_at = timezone.now()
+        training.save()
+    return redirect(
+        'exercise_statistics_by_training',
+        training_id=training_id,
+    )
+
+
+@login_required
+@require_POST
+def cancel_training_from_trainings_by_exercise(
+    request: HttpRequest,
+    training_id: int,
+    exercise_type: str,
+) -> HttpResponse:
+    """Func to cancel training."""
+    with transaction.atomic():
+        training = get_object_or_404(
+            Training.objects.select_for_update(),
+            user=request.user,
+            pk=training_id,
+        )
+
+        if training.status not in (
+            Training.Status.NOT_STARTED,
+            Training.Status.IN_PROGRESS,
+            Training.Status.PAUSED,
+        ):
+            return HttpResponse(
+                'Only not started or in progress or paused '
+                'training can be cancelled.',
+                status=409,
+                content_type='text/plain; charset=utf-8',
+            )
+
+        training.status = Training.Status.CANCELLED
+        training.cancelled_at = timezone.now()
+        training.save()
+    return redirect(
+        'exercise_statistics_by_exercise',
+        exercise_type=exercise_type,
     )

@@ -1,6 +1,9 @@
 from django.urls import path
 
 from .views import (
+    cancel_training_from_training_details,
+    cancel_training_from_trainings_by_exercise,
+    delete_training,
     four_step_breathing_exercise,
     index,
     start_four_step_breathing_exercise,
@@ -48,5 +51,20 @@ urlpatterns = [
         'trainings/<int:training_id>/status/',
         update_training_status,
         name='update_training_status',
+    ),
+    path(
+        'trainings/<int:training_id>/delete/',
+        delete_training,
+        name='delete_training',
+    ),
+    path(
+        'exercise-statistics/<str:exercise_type>/<int:training_id>/cancel/',
+        cancel_training_from_trainings_by_exercise,
+        name='cancel_training_from_trainings_by_exercise',
+    ),
+    path(
+        'exercise-statistics/trainings/<int:training_id>/cancel/',
+        cancel_training_from_training_details,
+        name='cancel_training_from_training_details',
     ),
 ]

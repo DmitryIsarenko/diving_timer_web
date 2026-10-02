@@ -39,6 +39,9 @@
   var phaseDeadline = 0; // ms (performance.now reference)
   var totalDeadline = 0; // ms
   var trainingId = null;
+  var trainingUnfinished = false;
+  var pageLeaving = false;
+  var exitCancellationSent = false;
   var statusRequestInProgress = false;
   var completionInProgress = false;
 
@@ -274,6 +277,8 @@
         await updateTrainingStatus("complete");
       }
 
+      trainingUnfinished = false;
+      if (pageLeaving) return;
       running = false;
       paused = false;
       enableStatsLink();
@@ -281,6 +286,7 @@
       pauseBtn.disabled = true;
       resetBtn.disabled = true;
     } catch (_) {
+      if (pageLeaving) return;
       running = false;
       paused = false;
       startBtn.disabled = true;
@@ -347,6 +353,47 @@
     );
   }
 
+  function cancelTrainingOnExit() {
+    if (trainingId === null || !trainingUnfinished || exitCancellationSent) {
+      return;
+    }
+
+    exitCancellationSent = true;
+    var formData = new FormData();
+    formData.set("action", "cancel");
+    formData.set(
+      "csrfmiddlewaretoken",
+      exerciseForm.querySelector('[name="csrfmiddlewaretoken"]').value,
+    );
+
+    // Best effort: the browser may still drop this request on shutdown.
+    try {
+      fetch(getStatusUrl(), {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+        keepalive: true,
+      }).catch(function () {
+        // There is no visible page on which to report an exit failure.
+      });
+    } catch (_) {
+      // A synchronous network API failure must not interrupt page navigation.
+    }
+  }
+
+  function handlePageHide() {
+    pageLeaving = true;
+    stopTimerLoop();
+    if (window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (_) {
+        /* noop */
+      }
+    }
+    cancelTrainingOnExit();
+  }
+
   async function updateTrainingStatus(action) {
     var formData = new FormData(exerciseForm);
     formData.set("action", action);
@@ -365,7 +412,7 @@
   }
 
   async function handleStart() {
-    if (running || !validateInputs()) {
+    if (pageLeaving || running || !validateInputs()) {
       return;
     }
 
@@ -379,15 +426,28 @@
     try {
       var data = await createTraining();
       trainingId = data.training_id;
+      trainingUnfinished = true;
+      exitCancellationSent = false;
+      // Start may finish after pagehide, especially in the back/forward cache.
+      if (pageLeaving) {
+        cancelTrainingOnExit();
+        return;
+      }
       startLocalTimer();
     } catch (_) {
+      if (pageLeaving) return;
       startBtn.disabled = false;
       window.alert("Не удалось сохранить тренировку. Попробуйте ещё раз.");
     }
   }
 
   async function handlePause() {
-    if (!running || statusRequestInProgress || completionInProgress) return;
+    if (
+      pageLeaving ||
+      !running ||
+      statusRequestInProgress ||
+      completionInProgress
+    ) return;
 
     statusRequestInProgress = true;
     pauseBtn.disabled = true;
@@ -399,10 +459,12 @@
           await updateTrainingStatus("pause");
         }
 
+        if (pageLeaving) return;
         stopTimerLoop();
         paused = true;
         pauseBtn.textContent = "Продолжить";
       } catch (_) {
+        if (pageLeaving) return;
         window.alert("Не удалось поставить тренировку на паузу.");
       }
     } else {
@@ -411,6 +473,7 @@
           await updateTrainingStatus("resume");
         }
 
+        if (pageLeaving) return;
         var now = performance.now();
         currentPhaseIndex = 0;
         startPhase(0);
@@ -426,6 +489,7 @@
         pauseBtn.textContent = "Пауза";
         startTimerLoop();
       } catch (_) {
+        if (pageLeaving) return;
         window.alert("Не удалось продолжить тренировку.");
       }
     }
@@ -437,6 +501,7 @@
 
   async function handleReset() {
     if (
+      pageLeaving ||
       (!running && trainingId === null) ||
       statusRequestInProgress ||
       completionInProgress
@@ -453,6 +518,8 @@
         await updateTrainingStatus("cancel");
       }
 
+      trainingUnfinished = false;
+      if (pageLeaving) return;
       trainingId = null;
       cachedValues = null;
       phases = [];
@@ -461,6 +528,7 @@
       resetUI();
       validateInputs();
     } catch (_) {
+      if (pageLeaving) return;
       window.alert("Не удалось отменить тренировку.");
       pauseBtn.disabled = false;
       resetBtn.disabled = false;
@@ -479,6 +547,13 @@
   startBtn.addEventListener("click", handleStart);
   pauseBtn.addEventListener("click", handlePause);
   resetBtn.addEventListener("click", handleReset);
+  window.addEventListener("pagehide", handlePageHide);
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted && pageLeaving) {
+      // Do not revive an abandoned timer from the browser's page cache.
+      window.location.reload();
+    }
+  });
 
   // Initial UI state
   disableStatsLink();
