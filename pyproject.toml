@@ -33,9 +33,10 @@ dependencies = [
 dev = [
   "typing_extensions==4.15.0",
   "mypy_extensions==1.1.0",
-  "pytest==7.0.0",
+  "pytest==8.3.5",
   "mypy==1.13.0",
   "ruff==0.16.3",
+  "pytest-django==4.10.0",
 ]
 
 
@@ -141,3 +142,10 @@ ignore_missing_imports = true
 
 [tool.django-stubs]
 django_settings_module = 'diving_timer.settings'
+
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "diving_timer.settings"
+pythonpath = ['diving_timer']
+testpaths = ['diving_timer/accounts', 'diving_timer/training']
+python_files = ['test_*.py']
