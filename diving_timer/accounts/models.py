@@ -3,6 +3,7 @@ from typing import Any, ClassVar
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .constants import MAX_EMAIL_LEN
 from .managers import CustomUserManager
 
 
@@ -13,7 +14,7 @@ class User(AbstractUser):
         verbose_name='email',
         unique=True,
         blank=False,
-        max_length=100,
+        max_length=MAX_EMAIL_LEN,
     )
     username = models.CharField(
         blank=True,
