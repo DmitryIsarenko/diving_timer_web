@@ -133,7 +133,7 @@ class LoginViewsTests(TestCase):
         """POST with invalid data does not authorize user."""
         user_email = 'example@mail.com'
         user_password = 'password'
-        user = User.objects.create_user(
+        User.objects.create_user(
             email=user_email,
             password=user_password,
             is_active=True,
@@ -162,12 +162,35 @@ class LoginViewsTests(TestCase):
                 }
                 self.assertIn(expected_error_code, error_codes)
 
+    def test_inactive_user_cannot_login(self) -> None:
+        """Inactive user cannot login."""
+        email = 'example@mail.com'
+        password = 'password'
+        user = User.objects.create_user(
+            email=email,
+            password=password,
+            is_active=False,
+        )
+        user.refresh_from_db()
+
+        response = self.client.post(
+            reverse('login'),
+            data={
+                'username': email,
+                'password': password,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
 
 class LogoutViewsTests(TestCase):
     """Check logout HTTP scenarios."""
 
     def setUp(self) -> None:
         """Setting up data."""
+        super().setUp()
         user_email = 'example@mail.com'
         user_password = 'password'
         self.user = User.objects.create_user(
@@ -178,7 +201,6 @@ class LogoutViewsTests(TestCase):
 
         self.client.force_login(self.user)
         self.assertEqual(self.client.session[SESSION_KEY], str(self.user.pk))
-        return super().setUp()
 
     def test_post_performs_logout(self) -> None:
         """POST forces logout and redirect to index."""

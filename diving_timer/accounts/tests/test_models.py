@@ -18,7 +18,6 @@ class TestAccountsModels(TestCase):
             email=email,
             password=self.password,
         )
-        user.save()
         user.refresh_from_db()
         self.assertEqual(
             user.username,
@@ -35,11 +34,10 @@ class TestAccountsModels(TestCase):
             username=username,
             password=self.password,
         )
-        user.save()
         user.refresh_from_db()
-        self.assertNotEqual(
+        self.assertEqual(
             user.username,
-            user.email,
+            username,
             'user.username should not be equal to email.',
         )
 
@@ -47,38 +45,38 @@ class TestAccountsModels(TestCase):
         """Test of creating two users with same emails."""
         email = 'example@mail.com'
 
+        user1 = User.objects.create(
+            email=email,
+            username='first-user',
+            password=self.password,
+        )
+        user1.refresh_from_db()
+
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
-                user1 = User.objects.create(
-                    email=email,
-                    password=self.password,
-                )
                 user2 = User.objects.create(
                     email=email,
+                    username='second-user',
                     password=self.password,
                 )
-                user1.save()
-                user2.save()
-                user1.refresh_from_db()
                 user2.refresh_from_db()
 
     def test_create_two_users_with_same_username(self) -> None:
         """Test of creating two users with same usernames."""
         username = 'non-unique-username'
 
+        user1 = User.objects.create(
+            email='one_email@mail.com',
+            password=self.password,
+            username=username,
+        )
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
-                user1 = User.objects.create(
-                    email='one_email@mail.com',
-                    password=self.password,
-                    username=username,
-                )
                 user2 = User.objects.create(
                     email='two_email@mail.com',
                     password=self.password,
                     username=username,
                 )
-                user1.save()
-                user2.save()
+
                 user1.refresh_from_db()
                 user2.refresh_from_db()

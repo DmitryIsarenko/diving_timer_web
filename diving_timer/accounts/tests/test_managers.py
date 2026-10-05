@@ -1,10 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from accounts.managers import CustomUserManager
-
-
-User = get_user_model()
+from accounts.models import User
 
 
 class TestCustomUserManager(TestCase):
@@ -60,11 +57,11 @@ class TestCustomUserManager(TestCase):
         )
 
         self.assertTrue(
-            self.super_user.check_password(self.password),
+            self.super_user.check_password(self.superuser_password),
             'user.check_password check failed.',
         )
         self.assertNotEqual(
-            self.password,
+            self.superuser_password,
             self.super_user.password,
             'Password is not hashed!',
         )
