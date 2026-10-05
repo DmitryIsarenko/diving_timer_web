@@ -7,14 +7,14 @@ if TYPE_CHECKING:
     from .models import User
 
 
-class CustomUserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager['User']):
     """Custom user manager."""
 
     def _create_user(
         self,
         email: str | None,
         password: str | None,
-        **extra_fields: dict,
+        **extra_fields: object,
     ) -> 'User':
         """Create and save a user with the given username, email, and password."""
         if not email:
@@ -33,7 +33,7 @@ class CustomUserManager(BaseUserManager):
         self,
         email: str | None = None,
         password: str | None = None,
-        **extra_fields: dict,
+        **extra_fields: object,
     ) -> 'User':
         """User creation method."""
         extra_fields.setdefault('is_staff', False)
@@ -44,7 +44,7 @@ class CustomUserManager(BaseUserManager):
         self,
         email: str | None = None,
         password: str | None = None,
-        **extra_fields: dict,
+        **extra_fields: object,
     ) -> 'User':
         """Superuser creation method."""
         extra_fields.setdefault('is_staff', True)

@@ -98,6 +98,97 @@ class RegistrationViewsTests(TestCase):
 class LoginViewsTests(TestCase):
     """Check login HTTP scenarios."""
 
+    def test_get_returns_login_form(self) -> None:
+        """GET retuns login page with form."""
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/login.html')
+
+        self.assertIsNotNone(response.context['form'])
+
+    def test_post_logins_user(self) -> None:
+        """POST with valid data logins user."""
+        email = 'example@mail.com'
+        password = 'password'
+        user = User.objects.create_user(
+            email=email,
+            password=password,
+            is_active=True,
+        )
+        user.refresh_from_db()
+
+        response = self.client.post(
+            reverse('login'),
+            data={
+                'username': email,
+                'password': password,
+            },
+        )
+
+        self.assertRedirects(response, reverse('index'))
+        self.assertIn(SESSION_KEY, self.client.session)
+        self.assertEqual(self.client.session[SESSION_KEY], str(user.pk))
+
+    def test_post_with_invalid_data(self) -> None:
+        """POST with invalid data does not authorize user."""
+        user_email = 'example@mail.com'
+        user_password = 'password'
+        user = User.objects.create_user(
+            email=user_email,
+            password=user_password,
+            is_active=True,
+        )
+
+        test_sets = [
+            (user_email, 'wrong_password', 'invalid_login'),
+            ('wrong@email.com', user_password, 'invalid_login'),
+        ]
+
+        for email, password, expected_error_code in test_sets:
+            with self.subTest(email=email, password=password):
+                response = self.client.post(
+                    reverse('login'),
+                    data={
+                        'username': email,
+                        'password': password,
+                    },
+                )
+
+                self.assertEqual(response.status_code, 200)
+                self.assertNotIn(SESSION_KEY, self.client.session)
+                form = response.context['form']
+                error_codes = {
+                    error.code for error in form.non_field_errors().as_data()
+                }
+                self.assertIn(expected_error_code, error_codes)
+
 
 class LogoutViewsTests(TestCase):
-    """Class."""
+    """Check logout HTTP scenarios."""
+
+    def setUp(self) -> None:
+        """Setting up data."""
+        user_email = 'example@mail.com'
+        user_password = 'password'
+        self.user = User.objects.create_user(
+            email=user_email,
+            password=user_password,
+            is_active=True,
+        )
+
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.session[SESSION_KEY], str(self.user.pk))
+        return super().setUp()
+
+    def test_post_performs_logout(self) -> None:
+        """POST forces logout and redirect to index."""
+        response = self.client.post(reverse('logout'))
+        self.assertRedirects(response, reverse('index'))
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_get_do_not_logout(self) -> None:
+        """GET does not log user out."""
+        response = self.client.get(reverse('logout'))
+        self.assertEqual(response.status_code, 405)
+        self.assertIn(SESSION_KEY, self.client.session)
+        self.assertEqual(self.client.session[SESSION_KEY], str(self.user.pk))
