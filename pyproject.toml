@@ -49,6 +49,7 @@ Repository = "https://github.com/DmitryIsarenko/diving_timer_web"
 target-version = "py312"
 line-length = 79
 fix = true
+src = ["diving_timer"]
 
 # Линтинг
 [tool.ruff.lint]
@@ -104,6 +105,7 @@ quote-style = "single"
 [tool.pyright]
 typeCheckingMode = "basic"
 reportAssignmentType = false
+extraPaths = ["diving_timer"]
 
 [tool.mypy]
 # Базовые настройки
