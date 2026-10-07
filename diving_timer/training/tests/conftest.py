@@ -1,5 +1,8 @@
 import pytest
 
+from accounts.models import User
+from training.models import Exercise, FourStepBreathingExercise, Training
+
 
 @pytest.fixture
 def start_four_step_breath_exercise_data() -> dict[str, str]:
@@ -11,3 +14,20 @@ def start_four_step_breath_exercise_data() -> dict[str, str]:
         'exhale_hold_duration_seconds': '2',
         'round_count': '5',
     }
+
+
+@pytest.fixture
+def default_4_step_exercise(db: None) -> FourStepBreathingExercise:
+    """Creates 4-step exercise with default params."""
+    return FourStepBreathingExercise.objects.create(
+        exercise_type=Exercise.ExerciseType.FOUR_STEP_BREATHING,
+    )
+
+
+@pytest.fixture
+def default_training(
+    user: User,
+    default_4_step_exercise: FourStepBreathingExercise,
+) -> Training:
+    """Create a training with default state."""
+    return Training.objects.create(user=user, exercise=default_4_step_exercise)
