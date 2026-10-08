@@ -58,13 +58,13 @@ urlpatterns = [
         name='delete_training',
     ),
     path(
-        'exercise-statistics/<str:exercise_type>/<int:training_id>/cancel/',
-        cancel_training_from_trainings_by_exercise,
-        name='cancel_training_from_trainings_by_exercise',
-    ),
-    path(
         'exercise-statistics/trainings/<int:training_id>/cancel/',
         cancel_training_from_training_details,
         name='cancel_training_from_training_details',
+    ),
+    path(
+        'exercise-statistics/<str:exercise_type>/<int:training_id>/cancel/',
+        cancel_training_from_trainings_by_exercise,
+        name='cancel_training_from_trainings_by_exercise',
     ),
 ]

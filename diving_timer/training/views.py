@@ -1,4 +1,5 @@
 from datetime import timedelta
+from http import HTTPStatus
 
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -42,9 +43,13 @@ def four_step_breathing_exercise(request: HttpRequest) -> HttpResponse:
     context = {
         'four_step_defaults': {
             'inhale_duration_seconds': DEFAULT_INHALE_DURATION_SECONDS,
-            'inhale_hold_duration_seconds': DEFAULT_INHALE_HOLD_DURATION_SECONDS,
+            'inhale_hold_duration_seconds': (
+                DEFAULT_INHALE_HOLD_DURATION_SECONDS
+            ),
             'exhale_duration_seconds': DEFAULT_EXHALE_DURATION_SECONDS,
-            'exhale_hold_duration_seconds': DEFAULT_EXHALE_HOLD_DURATION_SECONDS,
+            'exhale_hold_duration_seconds': (
+                DEFAULT_EXHALE_HOLD_DURATION_SECONDS
+            ),
             'round_count': DEFAULT_ROUND_COUNT,
         },
         'four_step_minimums': {
@@ -67,7 +72,7 @@ def start_four_step_breathing_exercise(request: HttpRequest) -> JsonResponse:
     if not form.is_valid():
         return JsonResponse(
             {'errors': form.errors.get_json_data()},
-            status=400,
+            status=HTTPStatus.BAD_REQUEST,
         )
 
     with transaction.atomic():
@@ -86,7 +91,7 @@ def start_four_step_breathing_exercise(request: HttpRequest) -> JsonResponse:
             'training_id': training.pk,
             'status': training.status,
         },
-        status=201,
+        status=HTTPStatus.CREATED,
     )
 
 
@@ -233,7 +238,7 @@ def update_training_status(
     if not form.is_valid():
         return JsonResponse(
             {'errors': form.errors.get_json_data()},
-            status=400,
+            status=HTTPStatus.BAD_REQUEST,
         )
 
     with transaction.atomic():
@@ -247,7 +252,7 @@ def update_training_status(
             if training.status != Training.Status.IN_PROGRESS:
                 return JsonResponse(
                     {'error': 'Only an active training can be paused.'},
-                    status=409,
+                    status=HTTPStatus.CONFLICT,
                 )
             training.status = Training.Status.PAUSED
 
@@ -259,7 +264,7 @@ def update_training_status(
             if training.status != Training.Status.PAUSED:
                 return JsonResponse(
                     {'error': 'Only a paused training can be resumed.'},
-                    status=409,
+                    status=HTTPStatus.CONFLICT,
                 )
             training.status = Training.Status.IN_PROGRESS
             training.save(update_fields=['status'])
@@ -268,7 +273,7 @@ def update_training_status(
             if training.status != Training.Status.IN_PROGRESS:
                 return JsonResponse(
                     {'error': 'Only an active training can be completed.'},
-                    status=409,
+                    status=HTTPStatus.CONFLICT,
                 )
             training.status = Training.Status.COMPLETED
             training.completed_at = timezone.now()
@@ -286,7 +291,7 @@ def update_training_status(
                             'training can be cancelled.'
                         )
                     },
-                    status=409,
+                    status=HTTPStatus.CONFLICT,
                 )
             training.status = Training.Status.CANCELLED
             training.cancelled_at = timezone.now()
@@ -295,7 +300,8 @@ def update_training_status(
         {
             'training_id': training.pk,
             'status': training.status,
-        }
+        },
+        status=HTTPStatus.OK,
     )
 
 
@@ -319,7 +325,7 @@ def delete_training(
         ):
             return HttpResponse(
                 'Only Completed or Cancelled training session can be deleted.',
-                status=409,
+                status=HTTPStatus.CONFLICT,
                 content_type='text/plain; charset=utf-8',
             )
 
@@ -354,7 +360,7 @@ def cancel_training_from_training_details(
             return HttpResponse(
                 'Only not started or in progress or paused '
                 'training can be cancelled.',
-                status=409,
+                status=HTTPStatus.CONFLICT,
                 content_type='text/plain; charset=utf-8',
             )
 
@@ -390,7 +396,7 @@ def cancel_training_from_trainings_by_exercise(
             return HttpResponse(
                 'Only not started or in progress or paused '
                 'training can be cancelled.',
-                status=409,
+                status=HTTPStatus.CONFLICT,
                 content_type='text/plain; charset=utf-8',
             )
 
