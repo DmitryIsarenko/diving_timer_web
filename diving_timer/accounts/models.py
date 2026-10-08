@@ -49,7 +49,7 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS: ClassVar[list[str]] = []
-    objects: ClassVar[CustomUserManager] = CustomUserManager()
+    objects: ClassVar[CustomUserManager] = CustomUserManager()  # type: ignore[assignment]
 
     def save(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Custom user saving method."""

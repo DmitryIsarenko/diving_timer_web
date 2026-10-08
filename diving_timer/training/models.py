@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -12,6 +16,10 @@ from .constants import (
     MIN_PHASE_DURATION_SECONDS,
     MIN_ROUND_COUNT,
 )
+
+
+if TYPE_CHECKING:
+    from accounts.models import User
 
 
 class Training(models.Model):
@@ -56,12 +64,12 @@ class Training(models.Model):
         null=True,
         default=None,
     )
-    user: models.ForeignKey = models.ForeignKey(
+    user: models.ForeignKey[User, User] = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='trainings',
     )
-    exercise: models.ForeignKey = models.ForeignKey(
+    exercise: models.ForeignKey[Exercise, Exercise] = models.ForeignKey(
         to='Exercise',
         on_delete=models.PROTECT,
         related_name='trainings',

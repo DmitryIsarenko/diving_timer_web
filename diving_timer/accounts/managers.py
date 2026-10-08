@@ -16,7 +16,7 @@ class CustomUserManager(BaseUserManager['User']):
         password: str | None,
         **extra_fields: object,
     ) -> 'User':
-        """Create and save a user with the given username, email, and password."""
+        """Create and save a user with given username, email, and password."""
         if not email:
             raise ValueError('The given email must be set')
         normalized_email = self.normalize_email(email)

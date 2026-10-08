@@ -50,6 +50,10 @@ target-version = "py312"
 line-length = 79
 fix = true
 src = ["diving_timer"]
+extend-exclude = [
+  "diving_timer/accounts/migrations",
+  "diving_timer/training/migrations",
+]
 
 # Линтинг
 [tool.ruff.lint]

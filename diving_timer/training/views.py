@@ -100,7 +100,6 @@ def statistics_trainings(request: HttpRequest) -> HttpResponse:
     """Вьюха на statistics_trainings страницу."""
     user = request.user
     trainings = Training.objects.filter(user=user)
-    context = {'trainings': trainings}
 
     total_trainings = Training.objects.filter(user=user)
     trainings_last_30_days = total_trainings.filter(
@@ -195,14 +194,14 @@ def statistics_trainings_by_training(
     """View to show trainings of a certain training session."""
     user = request.user
     training = get_object_or_404(Training, user=user, pk=training_id)
-    status_label = training.status
     exercise_type = training.exercise.exercise_type
+    exercise_name = Exercise.ExerciseType(exercise_type).label
     detail_template = 'training/training_details/four_step_breathing.html'
 
     match exercise_type:
         case Exercise.ExerciseType.FOUR_STEP_BREATHING:
-            exercise: FourStepBreathingExercise = (
-                training.exercise.fourstepbreathingexercise
+            exercise = get_object_or_404(
+                FourStepBreathingExercise, pk=training.exercise.pk
             )
 
             duration_per_round = (
@@ -219,7 +218,7 @@ def statistics_trainings_by_training(
         'training': training,
         'exercise': exercise,
         'exercise_type': exercise_type,
-        'exercise_name': training.exercise.get_exercise_type_display(),
+        'exercise_name': exercise_name,
         'planned_duration': planned_duration,
         'detail_template': detail_template,
     }

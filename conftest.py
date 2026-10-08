@@ -35,4 +35,3 @@ def other_user_client(other_user: User) -> Client:
     other_client = Client()
     other_client.force_login(other_user)
     return other_client
-

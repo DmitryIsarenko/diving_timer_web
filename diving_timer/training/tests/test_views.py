@@ -88,7 +88,7 @@ class TestStartFourStepBreathingExerciseView:
 
         expected_url = f'{reverse("login")}?next={url}'
 
-        assert response.url == expected_url
+        assert response.headers['Location'] == expected_url
         assert response.status_code == HTTPStatus.FOUND
 
     def test_get_is_not_allowed(self, user_client: Client) -> None:
@@ -116,7 +116,7 @@ class TestStartFourStepBreathingExerciseView:
         training_pk = response.json()['training_id']
         training = Training.objects.get(pk=training_pk)
         exercise = FourStepBreathingExercise.objects.get(
-            pk=training.exercise_id
+            pk=training.exercise.pk
         )
 
         assert training.status == Training.Status.IN_PROGRESS
