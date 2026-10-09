@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from training.models import Exercise, FourStepBreathingExercise, Training
+from training.models import FourStepBreathingExercise, Training
 
 
 class TrainingSerializer(serializers.ModelSerializer):

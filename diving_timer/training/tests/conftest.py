@@ -1,3 +1,5 @@
+from typing import cast
+
 import pytest
 
 from accounts.models import User
@@ -19,9 +21,13 @@ def start_four_step_breath_exercise_data() -> dict[str, str]:
 @pytest.fixture
 def default_4_step_exercise(db: None) -> FourStepBreathingExercise:
     """Creates 4-step exercise with default params."""
-    return FourStepBreathingExercise.objects.create(
-        exercise_type=Exercise.ExerciseType.FOUR_STEP_BREATHING,
+    exercise: FourStepBreathingExercise = cast(
+        FourStepBreathingExercise,
+        FourStepBreathingExercise.objects.create(
+            exercise_type=Exercise.ExerciseType.FOUR_STEP_BREATHING,
+        ),
     )
+    return exercise
 
 
 @pytest.fixture

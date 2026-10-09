@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import cast
 
 from django.test import Client
 from django.urls import reverse
@@ -115,8 +116,9 @@ class TestStartFourStepBreathingExerciseView:
         assert response.status_code == HTTPStatus.CREATED
         training_pk = response.json()['training_id']
         training = Training.objects.get(pk=training_pk)
-        exercise = FourStepBreathingExercise.objects.get(
-            pk=training.exercise.pk
+        exercise = cast(
+            FourStepBreathingExercise,
+            FourStepBreathingExercise.objects.get(pk=training.exercise.pk),
         )
 
         assert training.status == Training.Status.IN_PROGRESS

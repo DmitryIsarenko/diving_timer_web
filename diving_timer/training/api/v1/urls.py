@@ -20,8 +20,8 @@ urlpatterns = [
     path(
         'trainings/four-step-breathing/<int:training_id>/',
         FourStepBreathingTrainingDetailAPIView.as_view(),
-        name='four-step-breathing-detail'
-        ),
+        name='four-step-breathing-detail',
+    ),
     path(
         'trainings/four-step-breathing/',
         FourStepBreathingTrainingListAPIView.as_view(),
