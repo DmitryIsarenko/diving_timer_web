@@ -1,5 +1,6 @@
 from django.test import Client
 import pytest
+from rest_framework.test import APIClient
 
 from accounts.models import User
 
@@ -35,3 +36,9 @@ def other_user_client(other_user: User) -> Client:
     other_client = Client()
     other_client.force_login(other_user)
     return other_client
+
+
+@pytest.fixture
+def api_client() -> APIClient:
+    """Return an unauthenticated DRF API client."""
+    return APIClient()

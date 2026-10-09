@@ -22,6 +22,7 @@ dependencies = [
   "asgiref==3.10.0",
   "Django==5.0.6",
   "django-stubs>=6.1.1",
+  "djangorestframework>=3.17.2",
   "pathspec==0.12.1",
   "psycopg[binary]==3.2.12",
   "python-dotenv==1.2.1",
@@ -37,6 +38,7 @@ dev = [
   "mypy==1.13.0",
   "ruff==0.16.3",
   "pytest-django==4.10.0",
+  "djangorestframework-stubs>=3.18.1",
 ]
 
 

@@ -28,6 +28,7 @@ dependencies = [
     { name = "asgiref" },
     { name = "django" },
     { name = "django-stubs" },
+    { name = "djangorestframework" },
     { name = "pathspec" },
     { name = "psycopg", extra = ["binary"] },
     { name = "python-dotenv" },
@@ -37,6 +38,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "djangorestframework-stubs" },
     { name = "mypy" },
     { name = "mypy-extensions" },
     { name = "pytest" },
@@ -50,6 +52,7 @@ requires-dist = [
     { name = "asgiref", specifier = "==3.10.0" },
     { name = "django", specifier = "==5.0.6" },
     { name = "django-stubs", specifier = ">=6.1.1" },
+    { name = "djangorestframework", specifier = ">=3.17.2" },
     { name = "pathspec", specifier = "==0.12.1" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.2.12" },
     { name = "python-dotenv", specifier = "==1.2.1" },
@@ -59,6 +62,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "djangorestframework-stubs", specifier = ">=3.18.1" },
     { name = "mypy", specifier = "==1.13.0" },
     { name = "mypy-extensions", specifier = "==1.1.0" },
     { name = "pytest", specifier = "==8.3.5" },
@@ -107,6 +111,32 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4c/70/5f80a3acf99d26dea89e892d4573f0e650904e573708b5fbf3bfc9cec72c/django_stubs_ext-6.1.1.tar.gz", hash = "sha256:c35263135558d4c5d12b69e1f4c98632bf59bc3ab5118f7d4882d12800e3a7dd", size = 7217, upload-time = "2026-09-14T08:45:52.44Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/99/c3/305a9f7611c0dc96d2a638bc3a67bdcde5a7faa5f4669188db018b8af6fc/django_stubs_ext-6.1.1-py3-none-any.whl", hash = "sha256:64aebb7ce2c327a4a2b75207d67034e879fd7edf027c93487be69da363dc79fa", size = 10853, upload-time = "2026-09-14T08:45:51.289Z" },
+]
+
+[[package]]
+name = "djangorestframework"
+version = "3.17.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3b/35/c96055e700fdff25da3a7b7756cfd1d4dc54f38b9bc6d6c5e19e3a0fdc20/djangorestframework-3.17.2.tar.gz", hash = "sha256:89ed713b6dc83e1539f214b7d10808ae19bb8511004beba886225da6d5c9dafa", size = 906683, upload-time = "2026-08-05T07:47:22.5Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a2/46/c14108e400b208c394325eb63fbae06c81341b6447fa1a6f9da718b17fe7/djangorestframework-3.17.2-py3-none-any.whl", hash = "sha256:cb0546a7415d5b46c04e0f4fe0a54b2109f4fdd5e83ca773c8c6183a6493d042", size = 899109, upload-time = "2026-08-05T07:47:20.853Z" },
+]
+
+[[package]]
+name = "djangorestframework-stubs"
+version = "3.18.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django-stubs" },
+    { name = "types-pyyaml" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/71/a7727b07e0433da02fb1ea22994f492ecb437a1fe7be5bf952dbb545a0f5/djangorestframework_stubs-3.18.1.tar.gz", hash = "sha256:65ed4a9ea094616759a2cba4fe0ad85efe25b471b28281b790bfefb46704c64a", size = 32439, upload-time = "2026-08-25T22:49:27.506Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/1c/e266828fe2b78484651667976f8539e47b4e511a266424b890f613c6b7ad/djangorestframework_stubs-3.18.1-py3-none-any.whl", hash = "sha256:a2021f45f7759b493504c2a721f112ec4fd677753590c1ba346f4ebfb49a7f03", size = 55685, upload-time = "2026-08-25T22:49:26.178Z" },
 ]
 
 [[package]]

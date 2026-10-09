@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -74,6 +74,7 @@ class Training(models.Model):
         on_delete=models.PROTECT,
         related_name='trainings',
     )
+    objects: ClassVar[models.Manager[Training]] = models.Manager()
 
 
 class Exercise(models.Model):
@@ -93,6 +94,7 @@ class Exercise(models.Model):
         max_length=100,
         choices=ExerciseType.choices,
     )
+    objects: ClassVar[models.Manager[Exercise]] = models.Manager()
 
 
 class FourStepBreathingExercise(Exercise):
