@@ -4,6 +4,8 @@ from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
+from diving_timer.logging_config import building_logging_config
+
 
 load_dotenv()
 
@@ -28,6 +30,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 DEBUG = parse_bool(os.getenv('DEBUG'))
+
+LOGGING = building_logging_config(
+    base_dir=BASE_DIR,
+    debug=DEBUG,
+)
 
 raw_hosts: str = os.getenv('DJANGO_ALLOWED_HOSTS') or 'localhost, 127.0.0.1'
 ALLOWED_HOSTS = [host for host in raw_hosts.split(sep=',') if host.strip()]
