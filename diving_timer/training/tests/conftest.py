@@ -37,3 +37,15 @@ def default_training(
 ) -> Training:
     """Create a training with default state."""
     return Training.objects.create(user=user, exercise=default_4_step_exercise)
+
+
+@pytest.fixture
+def four_step_api_payload() -> dict[str, int]:
+    """Return valid JSON data for a four-step training."""
+    return {
+        'inhale_duration_seconds': 5,
+        'inhale_hold_duration_seconds': 20,
+        'exhale_duration_seconds': 4,
+        'exhale_hold_duration_seconds': 2,
+        'round_count': 5,
+    }

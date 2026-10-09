@@ -42,3 +42,19 @@ def other_user_client(other_user: User) -> Client:
 def api_client() -> APIClient:
     """Return an unauthenticated DRF API client."""
     return APIClient()
+
+
+@pytest.fixture
+def user_api_client(user: User) -> APIClient:
+    """Return an API client authenticated as the primary user."""
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
+
+
+@pytest.fixture
+def other_user_api_client(other_user: User) -> APIClient:
+    """Return an API client authenticated as another user."""
+    client = APIClient()
+    client.force_authenticate(user=other_user)
+    return client
