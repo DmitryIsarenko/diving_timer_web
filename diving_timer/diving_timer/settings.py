@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 from diving_timer.logging_config import building_logging_config
@@ -27,7 +26,10 @@ def parse_bool(value: str | None, default: bool = False) -> bool:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+if not SECRET_KEY or not SECRET_KEY.strip():
+    raise ValueError('SECRET_KEY must not be empty!')
 
 DEBUG = parse_bool(os.getenv('DEBUG'))
 
@@ -144,3 +146,11 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+EMAIL_TIMEOUT = 10
+
+# === Email verification ===
+EMAIL_VERIFICATION_MAX_AGE = 60 * 60 * 24
+SITE_BASE_URL = os.getenv(
+    'SITE_BASE_URL',
+    'http://127.0.0.1:8000',
+).rstrip('/')

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container">
+    <div class="card">
+      <h2>Confirm your email</h2>
+
+      <p>
+        Click the button below to confirm your email address
+        and activate your account.
+      </p>
+
+      <form method="post" class="stack">
+        {% csrf_token %}
+
+        <button type="submit" class="nav-btn">
+          Confirm email
+        </button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="container">
+    <div class="card">
+      <h2>Check your email</h2>
+
+      <p>Your account has been created.</p>
+
+      <p>
+        Check your inbox and spam folder for the confirmation email.
+        You must confirm your email before logging in.
+      </p>
+
+      <p>
+        If no email arrives, verification is still pending.
+      </p>
+      {% if resend_message %}
+        <p role="status">{{ resend_message }}</p>
+      {% endif %}
+
+      <p>
+        You can request another confirmation email once every 60 seconds.
+      </p>
+
+      <form
+        method="post"
+        action="{% url 'resend_verification_email' %}"
+        class="stack"
+      >
+        {% csrf_token %}
+
+        <button type="submit" class="nav-btn">
+          Resend confirmation email
+        </button>
+      </form>
+
+      <a href="{% url 'login' %}" class="nav-btn">
+        Go to login
+      </a>
+    </div>
+  </section>
+{% endblock %}

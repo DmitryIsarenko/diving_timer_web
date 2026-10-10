@@ -23,7 +23,12 @@ class User(AbstractUser):
     )
     is_email_verified: models.BooleanField = models.BooleanField(
         verbose_name='is_email_verified',
-        default=True,
+        default=False,
+    )
+    verification_email_last_attempt_at = models.DateTimeField(
+        verbose_name='verification_email_last_attempt_at',
+        null=True,
+        blank=True,
     )
     is_active = models.BooleanField(
         verbose_name='is_active',

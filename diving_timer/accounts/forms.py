@@ -58,7 +58,8 @@ class RegistrationForm(forms.ModelForm):
         """Create a user with hashed password."""
         user: UserModel = super().save(commit=False)
         user.set_password(self.cleaned_data['password1'])
-        user.is_active = True
+        user.is_active = False
+        user.is_email_verified = False
 
         if commit:
             user.save()
