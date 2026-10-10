@@ -40,7 +40,7 @@ class TrainingListAPIView(APIView):
 
 
 class TrainingDetailAPIView(APIView):
-    """Return one training owned by the authenticated user."""
+    """Retrieve, delete, or apply a lifecycle action to one training."""
 
     permission_classes = (IsAuthenticated,)
 
@@ -66,7 +66,7 @@ class TrainingDetailAPIView(APIView):
         request: Request,
         training_id: int,
     ) -> Response:
-        """Deletion."""
+        """Deletion of one training."""
         user = cast(User, request.user)
         training = get_object_or_404(
             Training.objects.select_related('exercise'),
@@ -88,47 +88,51 @@ class TrainingDetailAPIView(APIView):
         request: Request,
         training_id: int,
     ) -> Response:
-        """Change state by action."""
-        user = cast(User, request.user)
-        training = get_object_or_404(
-            Training.objects.select_related('exercise'),
-            user=user,
-            pk=training_id,
-        )
+        """Apply a lifecycle action to one owned training."""
         change_serializer = TrainingActionSerializer(data=request.data)
         change_serializer.is_valid(raise_exception=True)
+        with transaction.atomic():
+            user = cast(User, request.user)
+            training = get_object_or_404(
+                Training.objects.select_related('exercise').select_for_update(
+                    of=('self',)
+                ),
+                user=user,
+                pk=training_id,
+            )
+            if change_serializer.validated_data['action'] == 'pause':
+                if training.status != Training.Status.IN_PROGRESS:
+                    return Response(status=HTTPStatus.CONFLICT)
+                training.status = Training.Status.PAUSED
+                if training.first_paused_at is None:
+                    training.first_paused_at = timezone.now()
+                training.save(update_fields=['status', 'first_paused_at'])
 
-        if change_serializer.validated_data['action'] == 'pause':
-            if training.status != Training.Status.IN_PROGRESS:
-                return Response(status=HTTPStatus.CONFLICT)
-            training.status = Training.Status.PAUSED
-            if training.first_paused_at is None:
-                training.first_paused_at = timezone.now()
-            training.save(update_fields=['status', 'first_paused_at'])
-        elif change_serializer.validated_data['action'] == 'resume':
-            if training.status != Training.Status.PAUSED:
-                return Response(status=HTTPStatus.CONFLICT)
-            training.status = Training.Status.IN_PROGRESS
-            training.save(update_fields=['status'])
-        elif change_serializer.validated_data['action'] == 'complete':
-            if training.status != Training.Status.IN_PROGRESS:
-                return Response(status=HTTPStatus.CONFLICT)
-            training.status = Training.Status.COMPLETED
-            training.completed_at = timezone.now()
-            training.save(update_fields=['status', 'completed_at'])
+            elif change_serializer.validated_data['action'] == 'resume':
+                if training.status != Training.Status.PAUSED:
+                    return Response(status=HTTPStatus.CONFLICT)
+                training.status = Training.Status.IN_PROGRESS
+                training.save(update_fields=['status'])
 
-        elif change_serializer.validated_data['action'] == 'cancel':
-            if training.status not in (
-                Training.Status.IN_PROGRESS,
-                Training.Status.PAUSED,
-                Training.Status.NOT_STARTED,
-            ):
+            elif change_serializer.validated_data['action'] == 'complete':
+                if training.status != Training.Status.IN_PROGRESS:
+                    return Response(status=HTTPStatus.CONFLICT)
+                training.status = Training.Status.COMPLETED
+                training.completed_at = timezone.now()
+                training.save(update_fields=['status', 'completed_at'])
+
+            elif change_serializer.validated_data['action'] == 'cancel':
+                if training.status not in (
+                    Training.Status.IN_PROGRESS,
+                    Training.Status.PAUSED,
+                    Training.Status.NOT_STARTED,
+                ):
+                    return Response(status=HTTPStatus.CONFLICT)
+                training.status = Training.Status.CANCELLED
+                training.cancelled_at = timezone.now()
+                training.save(update_fields=['status', 'cancelled_at'])
+            else:
                 return Response(status=HTTPStatus.CONFLICT)
-            training.status = Training.Status.CANCELLED
-            training.cancelled_at = timezone.now()
-            training.save(update_fields=['status', 'cancelled_at'])
-        else:
-            return Response(status=HTTPStatus.CONFLICT)
 
         response_serializer = TrainingSerializer(instance=training)
         return Response(response_serializer.data, status=HTTPStatus.OK)
