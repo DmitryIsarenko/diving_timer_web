@@ -1,9 +1,10 @@
-from django.conf import settings
-from django.core.mail import send_mail
+from functools import partial
+
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import redirect, render
 
+from .email import send_welcome_email
 from .forms import RegistrationForm
 
 
@@ -20,14 +21,8 @@ def register(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             user = form.save()
             transaction.on_commit(
-                lambda: send_mail(
-                    subject='Welcome to Diving Timer',
-                    message='Welcome!',
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                ),
+                partial(send_welcome_email, to_email=user.email)
             )
-
             return redirect('login')
         context = {'form': form}
         return render(request, 'accounts/register.html', context)
