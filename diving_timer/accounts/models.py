@@ -25,10 +25,12 @@ class User(AbstractUser):
         verbose_name='is_email_verified',
         default=False,
     )
-    verification_email_last_attempt_at = models.DateTimeField(
-        verbose_name='verification_email_last_attempt_at',
-        null=True,
-        blank=True,
+    verification_email_last_attempt_at: models.DateTimeField = (
+        models.DateTimeField(
+            verbose_name='verification_email_last_attempt_at',
+            null=True,
+            blank=True,
+        )
     )
     is_active = models.BooleanField(
         verbose_name='is_active',

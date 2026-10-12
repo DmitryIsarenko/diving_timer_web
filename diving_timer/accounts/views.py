@@ -9,9 +9,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from .email import send_verification_email
+from .constants import VERIFICATION_EMAIL_RESEND_INTERVAL
 from .forms import RegistrationForm
 from .models import User
+from .tasks import send_verification_email_by_celery
 from .tokens import (
     check_email_verification_token,
     create_email_verification_token,
@@ -47,12 +48,13 @@ def register(request: HttpRequest) -> HttpResponse:
 
             transaction.on_commit(
                 partial(
-                    send_verification_email,
+                    send_verification_email_by_celery.delay,
                     to_email=user.email,
                     verification_url=verification_url,
                 ),
                 robust=True,
             )
+
             return render(request, 'accounts/verification_pending.html')
 
         context = {'form': form}
@@ -124,7 +126,7 @@ def resend_verification_email(request: HttpRequest) -> HttpResponse:
                 last_attempt = user.verification_email_last_attempt_at
 
                 if last_attempt is None or (now - last_attempt) >= timedelta(
-                    seconds=60
+                    seconds=VERIFICATION_EMAIL_RESEND_INTERVAL
                 ):
                     token = create_email_verification_token(user)
                     verification_path = reverse(
@@ -146,12 +148,13 @@ def resend_verification_email(request: HttpRequest) -> HttpResponse:
                     )
                     transaction.on_commit(
                         partial(
-                            send_verification_email,
+                            send_verification_email_by_celery.delay,
                             to_email=user.email,
                             verification_url=verification_url,
                         ),
                         robust=True,
                     )
+
     return render(
         request,
         'accounts/verification_pending.html',

@@ -154,3 +154,17 @@ SITE_BASE_URL = os.getenv(
     'SITE_BASE_URL',
     'http://127.0.0.1:8000',
 ).rstrip('/')
+
+
+# === REDIS settings ===
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+
+
+# === CELERY settings ===
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
