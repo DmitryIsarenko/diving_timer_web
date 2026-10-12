@@ -34,6 +34,9 @@ class RegistrationViewsTests(TestCase):
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
         SITE_BASE_URL='https://example.com',
+        CELERY_TASK_ALWAYS_EAGER=True,
+        CELERY_TASK_EAGER_PROPAGATES=True,
+        CELERY_TASK_STORE_EAGER_RESULT=False,
     )
     def test_post_creates_user(self) -> None:
         """Create a pending account and send a valid verification link."""
@@ -417,6 +420,9 @@ class EmailVerificationViewsTests(TestCase):
 @override_settings(
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
     SITE_BASE_URL='https://example.com',
+    CELERY_TASK_ALWAYS_EAGER=True,
+    CELERY_TASK_EAGER_PROPAGATES=True,
+    CELERY_TASK_STORE_EAGER_RESULT=False,
 )
 class ResendVerificationViewsTests(TestCase):
     """Check verification email resend scenarios."""
