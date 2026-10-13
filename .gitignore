@@ -15,10 +15,6 @@ db.sqlite3-journal
 *.media
 *.static
 
-# Django migrations
-*/migrations/
-!*/migrations/__init__.py
-
 # Environment files
 .env
 .env.prod
