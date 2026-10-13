@@ -149,7 +149,9 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 EMAIL_TIMEOUT = 10
 
 # === Email verification ===
-EMAIL_VERIFICATION_MAX_AGE = 60 * 60 * 24
+EMAIL_VERIFICATION_MAX_AGE = int(
+    os.getenv('EMAIL_VERIFICATION_MAX_AGE', 60 * 60 * 24)
+)
 SITE_BASE_URL = os.getenv(
     'SITE_BASE_URL',
     'http://127.0.0.1:8000',
@@ -157,8 +159,8 @@ SITE_BASE_URL = os.getenv(
 
 
 # === REDIS settings ===
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = '6379'
+REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
 
 
 # === CELERY settings ===
