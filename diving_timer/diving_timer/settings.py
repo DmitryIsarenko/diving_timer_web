@@ -39,7 +39,9 @@ LOGGING = building_logging_config(
 )
 
 raw_hosts: str = os.getenv('DJANGO_ALLOWED_HOSTS') or 'localhost, 127.0.0.1'
-ALLOWED_HOSTS = [host for host in raw_hosts.split(sep=',') if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip() for host in raw_hosts.split(sep=',') if host.strip()
+]
 
 
 LOGIN_URL = 'login'
@@ -134,6 +136,7 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
