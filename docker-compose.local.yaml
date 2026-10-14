@@ -1,4 +1,4 @@
-name: diving_timer_web
+name: diving_timer_web_local
 
 services:
   web:

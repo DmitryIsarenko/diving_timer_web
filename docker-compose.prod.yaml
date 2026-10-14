@@ -1,29 +1,73 @@
+name: diving_timer_web_prod
+
 services:
   web:
-    build: .
+    image: ${APP_IMAGE:?APP_IMAGE is required}
     command: gunicorn diving_timer.wsgi:application --bind 0.0.0.0:8000
-    ports:
-      - 8000:8000
     env_file:
       - .env.prod
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
       celery_worker:
         condition: service_healthy
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: ${NGINX_IMAGE:?NGINX_IMAGE is required}
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - static_data:/var/www/static:ro
+    depends_on:
+      web:
+        condition: service_started
+      collectstatic:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  collectstatic:
+    user: "0:0"
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    env_file:
+      - .env.prod
+    volumes:
+      - static_data:/app/staticfiles
+    command:
+      ["/app/.venv/bin/python", "manage.py", "collectstatic", "--noinput"]
+    restart: "no"
+
+  migrate:
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    command: ["/app/.venv/bin/python", "manage.py", "migrate", "--noinput"]
+    env_file:
+      - .env.prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
 
   postgres:
-    image: postgres:${POSTGRES_VERSION}
+    image: postgres:${POSTGRES_VERSION:?POSTGRES_VERSION is required}
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
       PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "127.0.0.1:5430:5432"
     volumes:
       - pgdata:/var/lib/postgresql
     restart: unless-stopped
@@ -34,28 +78,40 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis:
-    image: redis:latest
-    ports:
-      - "127.0.0.1:6380:6379"
+    image: redis:${REDIS_VERSION:?REDIS_VERSION is required}
     volumes:
       - redisdata:/data
+    command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 15s
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   celery_worker:
-    build: .
+    image: ${APP_IMAGE:?APP_IMAGE is required}
     command: celery -A diving_timer worker --loglevel=INFO
     env_file:
       - .env.prod
     depends_on:
       redis:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test:
         [
@@ -66,7 +122,14 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   pgdata:
   redisdata:
+  static_data:
