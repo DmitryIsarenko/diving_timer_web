@@ -1,18 +1,27 @@
-FROM python:3.12-slim
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-WORKDIR /app
+FROM python:3.12-slim-trixie
 
-# For pip requirements:
-# COPY requirements.txt .
-# RUN pip install -r requirements.txt
+# copy UV to our container
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# For pyproject.toml:
-COPY pyproject.toml .
-RUN pip install .
+WORKDIR /app/
+
+COPY ./uv.lock ./uv.lock
+COPY ./pyproject.toml ./pyproject.toml
+
+RUN uv venv
+RUN uv sync --locked --no-dev --no-install-project
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+RUN useradd --create-home appuser
 
 COPY . .
 
-# CMD ["python", "./diving_timer/manage.py", "runserver", "0.0.0.0:8000"]
+RUN chown -R appuser:appuser /app
+
+USER appuser
+
+
+WORKDIR /app/diving_timer/
+
+CMD ["/app/.venv/bin/gunicorn", "diving_timer.wsgi:application","--bind", "0.0.0.0:8000"]

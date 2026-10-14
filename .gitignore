@@ -18,6 +18,7 @@ db.sqlite3-journal
 # Environment files
 .env
 .env.prod
+.env.local
 *.env
 *.venv
 .venv/
