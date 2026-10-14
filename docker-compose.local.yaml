@@ -1,3 +1,5 @@
+name: diving_timer_web
+
 services:
   web:
     build: .
@@ -16,6 +18,31 @@ services:
       celery_worker:
         condition: service_healthy
     restart: unless-stopped
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - static_data:/var/www/static:ro
+    depends_on:
+      web:
+        condition: service_started
+      collectstatic:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+
+  collectstatic:
+    user: "0:0"
+    build: .
+    env_file:
+      - .env.local
+    volumes:
+      - static_data:/app/staticfiles
+    command: ["/app/.venv/bin/python", "manage.py", "collectstatic", "--noinput"]
+    restart: "no"
+
 
   migrate:
     build: .
@@ -53,6 +80,7 @@ services:
       - "127.0.0.1:6380:6379"
     volumes:
       - redisdata:/data
+    command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -81,7 +109,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    restart: unless-stopped
 
 volumes:
   pgdata:
   redisdata:
+  static_data:
