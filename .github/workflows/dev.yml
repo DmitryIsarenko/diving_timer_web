@@ -1,0 +1,15 @@
+name: Dev diving-timer Workflow
+on:
+  push:
+    branches:
+      - dev
+      - deploy
+jobs:
+  checkout-and-print-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Print project tree
+        run: tree .
