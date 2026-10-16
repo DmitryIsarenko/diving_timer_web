@@ -128,7 +128,7 @@ wheels = [
 [[package]]
 name = "diving-timer-web"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "asgiref" },
     { name = "celery", extra = ["redis"] },
