@@ -23,7 +23,15 @@ jobs:
         run: |
           uv venv
           uv sync
-          cd ./diving_timer
+
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_DEBUG: false
+          envkey_SECRET_KEY: "ci-only-not-for-production"
+          directory: ./
+          file_name: .env
+          fail_on_empty: false
 
       - name: Linting
         run: uv run ruff check .
@@ -33,8 +41,8 @@ jobs:
 
       - name: Type checking
         working-directory: ./diving_timer
-        env:
-          SECRET_KEY: ci-only-not-for-production
+        # env:
+        #   SECRET_KEY: ci-only-not-for-production
         run: uv run mypy .
 
       - name: Pytest
