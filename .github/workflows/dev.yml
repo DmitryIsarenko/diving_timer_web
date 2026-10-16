@@ -5,11 +5,34 @@ on:
       - dev
       - deploy
 jobs:
-  checkout-and-print-tree:
+  format-lint-typecheck-pytest:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
+      - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Print project tree
-        run: tree .
+      - name: Install python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync
+          cd ./diving_timer
+
+      - name: Linting
+        run: uv run ruff check .
+
+      - name: Formatting
+        run: uv run ruff format .
+
+      - name: Type checking
+        run: uv run mypy
+
+      - name: Pytest
+        run: uv run pytest
