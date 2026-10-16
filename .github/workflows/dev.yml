@@ -7,6 +7,31 @@ on:
 jobs:
   format-lint-typecheck-pytest:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: diving_timer_ci
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user -d diving_timer_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DEBUG: "false"
+      SECRET_KEY: ci-only-not-for-production
+      DB_NAME: diving_timer_ci
+      DB_USER: ci_user
+      DB_PASSWORD: ci_password
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -24,14 +49,14 @@ jobs:
           uv venv
           uv sync
 
-      - name: Create .env file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_DEBUG: false
-          envkey_SECRET_KEY: "ci-only-not-for-production"
-          directory: ./
-          file_name: .env
-          fail_on_empty: false
+      # - name: Create .env file
+      #   uses: SpicyPizza/create-envfile@v1.3
+      #   with:
+      #     envkey_DEBUG: false
+      #     envkey_SECRET_KEY: "ci-only-not-for-production"
+      #     directory: ./
+      #     file_name: .env
+      #     fail_on_empty: false
 
       - name: Linting
         run: uv run ruff check .
