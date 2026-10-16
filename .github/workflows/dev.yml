@@ -4,6 +4,9 @@ on:
     branches:
       - dev
       - deploy
+  pull_request:
+    branches:
+      - deploy
 jobs:
   format-lint-typecheck-pytest:
     runs-on: ubuntu-latest
@@ -49,26 +52,20 @@ jobs:
           uv venv
           uv sync
 
-      # - name: Create .env file
-      #   uses: SpicyPizza/create-envfile@v1.3
-      #   with:
-      #     envkey_DEBUG: false
-      #     envkey_SECRET_KEY: "ci-only-not-for-production"
-      #     directory: ./
-      #     file_name: .env
-      #     fail_on_empty: false
 
       - name: Linting
-        run: uv run ruff check .
+        run: uv run ruff check --no-fix .
 
       - name: Formatting
-        run: uv run ruff format .
+        run: uv run ruff format --check .
 
       - name: Type checking
         working-directory: ./diving_timer
-        # env:
-        #   SECRET_KEY: ci-only-not-for-production
         run: uv run mypy .
+
+      - name: Manage.py check
+        working-directory: ./diving_timer
+        run: uv run python manage.py check
 
       - name: Pytest
         working-directory: ./diving_timer
