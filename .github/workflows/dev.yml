@@ -33,6 +33,8 @@ jobs:
 
       - name: Type checking
         working-directory: ./diving_timer
+        env:
+          SECRET_KEY: ci-only-not-for-production
         run: uv run mypy .
 
       - name: Pytest
