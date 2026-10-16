@@ -32,7 +32,9 @@ jobs:
         run: uv run ruff format .
 
       - name: Type checking
+        working-directory: ./diving_timer
         run: uv run mypy .
 
       - name: Pytest
+        working-directory: ./diving_timer
         run: uv run pytest -v -s
