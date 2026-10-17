@@ -49,6 +49,9 @@ dev = [
 Homepage = "https://github.com/DmitryIsarenko/diving_timer_web"
 Repository = "https://github.com/DmitryIsarenko/diving_timer_web"
 
+[tool.uv]
+package = false
+
 [tool.ruff]
 # Поддержка версии Python
 target-version = "py312"
