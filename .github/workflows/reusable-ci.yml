@@ -54,7 +54,7 @@ jobs:
 
       - name: Type checking
         working-directory: ./diving_timer
-        run: uv run mypy
+        run: uv run mypy .
 
       - name: Manage.py check
         working-directory: ./diving_timer
