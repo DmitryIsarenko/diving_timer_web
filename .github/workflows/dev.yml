@@ -1,12 +1,9 @@
 name: Dev diving-timer Workflow
 on:
-  push:
-    branches:
-      - dev
-      - deploy
   pull_request:
     branches:
-      - deploy
+      - dev
+  workflow_call:
 jobs:
   format-lint-typecheck-pytest:
     runs-on: ubuntu-latest
@@ -51,7 +48,6 @@ jobs:
         run: |
           uv venv
           uv sync
-
 
       - name: Linting
         run: uv run ruff check --no-fix .
