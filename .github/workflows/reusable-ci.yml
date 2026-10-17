@@ -1,0 +1,65 @@
+name: Reusable CI
+on:
+  workflow_call:
+jobs:
+  format-lint-typecheck-pytest:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: diving_timer_ci
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user -d diving_timer_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DEBUG: "false"
+      SECRET_KEY: ci-only-not-for-production
+      DB_NAME: diving_timer_ci
+      DB_USER: ci_user
+      DB_PASSWORD: ci_password
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync
+
+      - name: Linting
+        run: uv run ruff check --no-fix .
+
+      - name: Formatting
+        run: uv run ruff format --check .
+
+      - name: Type checking
+        working-directory: ./diving_timer
+        run: uv run mypy .
+
+      - name: Manage.py check
+        working-directory: ./diving_timer
+        run: uv run python manage.py check
+
+      - name: Pytest
+        working-directory: ./diving_timer
+        run: uv run pytest -v -s
