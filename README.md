@@ -280,7 +280,7 @@ Cancellation keeps history; deletion removes a final session permanently.
 To register, open `/accounts/register/`, submit an email and password, open the
 verification email, and select **Confirm email**. Then sign in at
 `/accounts/login/`. Links expire after 24 hours by default. Resend currently has
-a server-side **10-second** minimum interval and depends on the pending account
+a server-side **60-second** minimum interval and depends on the pending account
 stored in the same browser session.
 
 ## Development and checks
