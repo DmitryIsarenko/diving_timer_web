@@ -1,0 +1,12 @@
+name: CI on PR
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-ci.yml

@@ -1,8 +1,5 @@
-name: Dev diving-timer Workflow
+name: Reusable CI
 on:
-  pull_request:
-    branches:
-      - dev
   workflow_call:
 jobs:
   format-lint-typecheck-pytest:
@@ -57,7 +54,7 @@ jobs:
 
       - name: Type checking
         working-directory: ./diving_timer
-        run: uv run mypy .
+        run: uv run mypy
 
       - name: Manage.py check
         working-directory: ./diving_timer

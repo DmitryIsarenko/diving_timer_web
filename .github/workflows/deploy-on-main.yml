@@ -1,0 +1,14 @@
+name: Deploy main
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-ci.yml
+  deploy:
+    uses: ./.github/workflows/reusable-deploy.yml
