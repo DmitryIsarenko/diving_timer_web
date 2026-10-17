@@ -1,14 +1,21 @@
-name: Deploy main
+name: Deploy release
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   ci:
     uses: ./.github/workflows/reusable-ci.yml
+
   deploy:
+    needs: ci
     uses: ./.github/workflows/reusable-deploy.yml
+    secrets: inherit
